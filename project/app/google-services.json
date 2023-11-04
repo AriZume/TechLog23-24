@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1073116868392",
+    "project_id": "picturesdb-20046",
+    "storage_bucket": "picturesdb-20046.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073116868392:android:5c8264edf2fcb2a1c4aa1d",
+        "android_client_info": {
+          "package_name": "com.example.geosnap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF1Lr6ZyAhqW0OoZFdMKwhOnMvd7YfVp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
