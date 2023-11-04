@@ -9,12 +9,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d0a1ae27-d38a-414d-974c-226a9ed4e759" name="Changes" comment="Build Fix">
-      <change afterPath="$PROJECT_DIR$/project/app/google-services.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/project/app/src/main/java/com/example/geosnap/databases/PicturesDB.java" afterDir="false" />
+    <list default="true" id="d0a1ae27-d38a-414d-974c-226a9ed4e759" name="Changes" comment="database starter">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/project/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/project/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/app/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/project/app/proguard-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/project/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/app/src/main/java/com/example/geosnap/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/app/src/main/java/com/example/geosnap/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/app/src/main/java/com/example/geosnap/databases/PicturesDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/app/src/main/java/com/example/geosnap/databases/PicturesDB.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,12 +229,20 @@
       <option name="project" value="LOCAL" />
       <updated>1699039544105</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="database starter">
+      <created>1699107492831</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1699107492831</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Build Fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="Build Fix" />
+    <MESSAGE value="database starter" />
+    <option name="LAST_COMMIT_MESSAGE" value="database starter" />
   </component>
 </project>
