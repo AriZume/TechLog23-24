@@ -1,8 +1,9 @@
 package com.example.geosnap;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -10,8 +11,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.geosnap.databases.DatabaseAdapter;
 import com.example.geosnap.databases.DatabaseData;
+import com.example.geosnap.databases.MyAdapter;
 import com.example.geosnap.databases.UploadActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -21,15 +22,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fab;
     RecyclerView recyclerView;
-    ArrayList<DatabaseData> dataList;
-    DatabaseAdapter adapter;
-    private final DatabaseReference dbRef= FirebaseDatabase
-            .getInstance().getReference("pictures");
+    List<DatabaseData> dataList;
+    DatabaseReference dbRef;
+    ValueEventListener valueEventListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,27 +40,38 @@ public class MainActivity extends AppCompatActivity {
 
         fab= findViewById(R.id.fab);
         recyclerView= findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        GridLayoutManager gridLayoutManager= new GridLayoutManager(MainActivity.this, 1);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+        AlertDialog.Builder builder= new AlertDialog.Builder(MainActivity.this);
+        builder.setCancelable(false);
+        builder.setView(R.layout.progress_layout);
+        AlertDialog dialog= builder.create();
+        dialog.show();
+
         dataList= new ArrayList<>();
-        adapter= new DatabaseAdapter(dataList, this);
+        MyAdapter adapter= new MyAdapter(MainActivity.this, dataList);
         recyclerView.setAdapter(adapter);
-        dbRef.addValueEventListener(new ValueEventListener() {
+        dbRef= FirebaseDatabase.getInstance().getReference("info");
+        dialog.show();
+        valueEventListener= dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                dataList.clear();
                 for (DataSnapshot shot: snapshot.getChildren()){
-                    DatabaseData data= shot.getValue(DatabaseData.class);
-                    dataList.add(data);
+                    DatabaseData dataClass= shot.getValue(DatabaseData.class);
+                    dataList.add(dataClass);
                 }
                 adapter.notifyDataSetChanged();
+                dialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                dialog.dismiss();
             }
         });
-
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

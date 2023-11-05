@@ -21,9 +21,12 @@
         android:theme="@style/Theme.GeoSnap"
         tools:targetApi="31">
         <activity
+            android:name=".databases.DetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".databases.UploadActivity"
             android:exported="false"
-            android:theme="@style/Theme.UploadActivity"/>
+            android:theme="@style/Theme.UploadActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
