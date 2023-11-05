@@ -1,15 +1,17 @@
 package com.example.geosnap;
 
+import com.example.geosnap.fragments.HomeFragment;
+import com.example.geosnap.fragments.SearchFragment;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
-
 import android.content.Intent;
-import android.widget.Button;
 
 import com.example.geosnap.databinding.ActivityMainBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -31,13 +33,14 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
 
-        Button postBtn = findViewById(R.id.postBtn);
-        postBtn.setOnClickListener(v -> openPostActivity());
+        FloatingActionButton postFab = findViewById(R.id.postFab);
+        postFab.setOnClickListener(v -> openPostActivity());
     }
 
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
