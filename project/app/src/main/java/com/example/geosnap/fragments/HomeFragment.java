@@ -1,5 +1,9 @@
 package com.example.geosnap.fragments;
 
+import static com.google.android.gms.maps.CameraUpdateFactory.newLatLng;
+
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,6 +22,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Locale;
+
 public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,6 +40,29 @@ public class HomeFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 // When map is loaded
+
+
+                //double latitude = location.getLatitude();
+                //double longitude = location.getLongitude();
+                // Create a LatLng object with the initial position
+                LatLng initialPosition = new LatLng(41.0749, 23.5555);    //latitude,longitude); //yourInitialLatitude,yourInitialLongitude);
+
+                // Initialize marker options
+                MarkerOptions markerOptions = new MarkerOptions();
+                // Set position of marker
+                markerOptions.position(initialPosition);
+                // Set title of marker
+                markerOptions.title(initialPosition.latitude + " : " + initialPosition.longitude);
+
+                // Add marker on map
+                googleMap.addMarker(markerOptions);
+
+                // Zoom to the initial marker position
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(initialPosition, 10));
+
+
+
+
                 googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
