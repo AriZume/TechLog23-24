@@ -1,36 +1,52 @@
 package com.example.geosnap;
 
-import androidx.annotation.NonNull;
+import com.example.geosnap.fragments.HomeFragment;
+import com.example.geosnap.fragments.SearchFragment;
+
 import androidx.appcompat.app.AppCompatActivity;
-
-
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
+import android.content.Intent;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.example.geosnap.databinding.ActivityMainBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
-
-    private GoogleMap myMap;
+public class MainActivity extends AppCompatActivity {
+    ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.maps);
-        mapFragment.getMapAsync(this);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        replaceFragment(new HomeFragment());
+        binding.bottomNavigationView.setBackground(null);
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if(id == R.id.home){
+                replaceFragment(new HomeFragment());
+            } else if (id == R.id.search) {
+                replaceFragment(new SearchFragment());
+            }
+            return false;
+        });
+
+        FloatingActionButton postFab = findViewById(R.id.postFab);
+        postFab.setOnClickListener(v -> openPostActivity());
     }
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        myMap = googleMap;
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.commit();
+    }
 
-        LatLng volos = new com.google.android.gms.maps.model.LatLng(39.366669, 22.933332);
-        myMap.addMarker(new MarkerOptions().position(volos).title("Volos"));
-        myMap.moveCamera(CameraUpdateFactory.newLatLng(volos));
+    public void openPostActivity(){
+        Intent intent = new Intent(MainActivity.this, PostActivity.class);
+        startActivity(intent);
     }
 }
