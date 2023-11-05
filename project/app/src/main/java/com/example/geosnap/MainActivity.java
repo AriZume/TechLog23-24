@@ -1,15 +1,66 @@
 package com.example.geosnap;
 
+import com.example.geosnap.fragments.HomeFragment;
+import com.example.geosnap.fragments.SearchFragment;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
+import android.content.Intent;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.geosnap.databinding.ActivityMainBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback{
+    ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        Fragment fragment = new HomeFragment();
+        replaceFragment(fragment);
+        getSupportFragmentManager()
+                .beginTransaction().replace(R.id.frame_layout,fragment)
+                .commit();
+
+        binding.bottomNavigationView.setBackground(null);
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if(id == R.id.home){
+                replaceFragment(new HomeFragment());
+            } else if (id == R.id.search) {
+                replaceFragment(new SearchFragment());
+            }
+            return false;
+        });
+
+        FloatingActionButton postFab = findViewById(R.id.postFab);
+        postFab.setOnClickListener(v -> openPostActivity());
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.commit();
+    }
+
+    public void openPostActivity(){
+        Intent intent = new Intent(MainActivity.this, PostActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+
     }
 }
