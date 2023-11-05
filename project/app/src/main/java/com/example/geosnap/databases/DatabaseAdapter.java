@@ -43,6 +43,13 @@ public class DatabaseAdapter extends RecyclerView.Adapter<DatabaseAdapter.MyView
         return dataList.size();
     }
 
+    public void  searchDataList(ArrayList<DatabaseData> searchlist){
+        dataList = searchlist;
+        notifyDataSetChanged();
+
+    }
+
+
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
         ImageView recyclerImage;

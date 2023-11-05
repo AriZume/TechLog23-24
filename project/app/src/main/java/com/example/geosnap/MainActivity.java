@@ -2,6 +2,7 @@ package com.example.geosnap;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ArrayList<DatabaseData> dataList;
     DatabaseAdapter adapter;
+    SearchView searchView;
+
     private final DatabaseReference dbRef= FirebaseDatabase
             .getInstance().getReference("pictures");
 
@@ -36,9 +39,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main1);
 
+
         fab= findViewById(R.id.fab);
         recyclerView= findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
+        searchView = findViewById(R.id.search);
+        searchView.clearFocus();
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         dataList= new ArrayList<>();
         adapter= new DatabaseAdapter(dataList, this);
@@ -59,6 +66,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchList(newText);
+                return true;
+            }
+        });
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,5 +88,14 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+    public void searchList(String text){
+        ArrayList<DatabaseData> searchList = new ArrayList<>();
+        for (DatabaseData dataClass: dataList ){
+            if (dataClass.getDate().toLowerCase().contains(text.toLowerCase())){
+                searchList.add(dataClass);
+            }
+        }
+        adapter.searchDataList(searchList);
     }
 }
