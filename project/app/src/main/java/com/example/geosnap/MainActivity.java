@@ -3,6 +3,7 @@ package com.example.geosnap;
 import com.example.geosnap.fragments.HomeFragment;
 import com.example.geosnap.fragments.SearchFragment;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -13,7 +14,10 @@ import android.content.Intent;
 import com.example.geosnap.databinding.ActivityMainBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback{
     ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +25,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        replaceFragment(new HomeFragment());
+        Fragment fragment = new HomeFragment();
+        replaceFragment(fragment);
+        getSupportFragmentManager()
+                .beginTransaction().replace(R.id.frame_layout,fragment)
+                .commit();
+
         binding.bottomNavigationView.setBackground(null);
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -48,5 +57,10 @@ public class MainActivity extends AppCompatActivity {
     public void openPostActivity(){
         Intent intent = new Intent(MainActivity.this, PostActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+
     }
 }
