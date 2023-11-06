@@ -1,6 +1,7 @@
 package com.example.geosnap.databases;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,23 @@ public class DatabaseAdapter extends RecyclerView.Adapter<DatabaseAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Glide.with(context).load(dataList.get(position).getImageUrl()).into(holder.recyclerImage);
-        holder.recyclerCaption.setText(dataList.get(position).getCaption());
+        holder.recyclerCaption.setText(dataList.get(position).getImageUrl());
+        holder.recyclerCaption.setText(dataList.get(position).getName());
+        holder.recyclerCaption.setText(dataList.get(position).getDescription());
+
+        holder.recyclerCaption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context,DetailActivity.class);
+                intent.putExtra("Image",dataList.get(holder.getAdapterPosition()).getImageUrl());
+                intent.putExtra("Desciption",dataList.get(holder.getAdapterPosition()).getDescription());
+                intent.putExtra("Name",dataList.get(holder.getAdapterPosition()).getName());
+                intent.putExtra("key",dataList.get(holder.getAdapterPosition()).getKey());
+                intent.putExtra("Date",dataList.get(holder.getAdapterPosition()).getDate());
+                context.startActivity(intent);
+
+            }
+        });
     }
 
     @Override
@@ -48,7 +65,6 @@ public class DatabaseAdapter extends RecyclerView.Adapter<DatabaseAdapter.MyView
         notifyDataSetChanged();
 
     }
-
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{

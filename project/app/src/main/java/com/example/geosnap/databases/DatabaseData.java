@@ -2,6 +2,15 @@ package com.example.geosnap.databases;
 
 public class DatabaseData {
     private String imageUrl, description, author, date, name;
+    private String key;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public DatabaseData(String imageUrl, String description, String author, String date, String name) {
         this.imageUrl = imageUrl;
