@@ -34,7 +34,7 @@ public class DatabaseAdapter extends RecyclerView.Adapter<DatabaseAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Glide.with(context).load(dataList.get(position).getImageURL()).into(holder.recyclerImage);
+        Glide.with(context).load(dataList.get(position).getImageUrl()).into(holder.recyclerImage);
         holder.recyclerCaption.setText(dataList.get(position).getCaption());
     }
 
