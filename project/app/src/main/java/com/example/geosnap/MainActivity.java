@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.content.Intent;
 
 import com.example.geosnap.databinding.ActivityMainBinding;
+import com.example.geosnap.imagePicker.PostActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.android.gms.maps.GoogleMap;
