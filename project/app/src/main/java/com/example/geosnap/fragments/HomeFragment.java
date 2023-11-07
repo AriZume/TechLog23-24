@@ -41,22 +41,19 @@ public class HomeFragment extends Fragment {
             public void onMapReady(GoogleMap googleMap) {
                 // When map is loaded
 
-
-                //double latitude = location.getLatitude();
-                //double longitude = location.getLongitude();
+                UserLocation userobj = new UserLocation();
+                double latitude = userobj.getLat();
+                double longitude = userobj.getLon();
                 // Create a LatLng object with the initial position
-                LatLng initialPosition = new LatLng(41.0749, 23.5555);    //latitude,longitude); //yourInitialLatitude,yourInitialLongitude);
-
+                LatLng initialPosition = new LatLng(    latitude,longitude);         // 41.0749, 23.5555);
                 // Initialize marker options
                 MarkerOptions markerOptions = new MarkerOptions();
                 // Set position of marker
                 markerOptions.position(initialPosition);
                 // Set title of marker
                 markerOptions.title(initialPosition.latitude + " : " + initialPosition.longitude);
-
                 // Add marker on map
                 googleMap.addMarker(markerOptions);
-
                 // Zoom to the initial marker position
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(initialPosition, 10));
 
