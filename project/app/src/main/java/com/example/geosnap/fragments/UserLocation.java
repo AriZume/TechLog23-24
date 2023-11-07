@@ -33,7 +33,7 @@ public class UserLocation extends Activity {
 
     // Initializing other items
     // from layout file
-    Double latitude, longitude;
+    double latitude, longitude;
     int PERMISSION_ID = 44;
 
     public double getLat() {
@@ -154,10 +154,6 @@ public class UserLocation extends Activity {
         }
     }
 
-
-    /**
-     * @param hasCapture
-     */
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
         super.onPointerCaptureChanged(hasCapture);

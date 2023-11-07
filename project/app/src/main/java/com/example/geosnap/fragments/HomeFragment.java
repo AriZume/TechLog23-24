@@ -45,7 +45,7 @@ public class HomeFragment extends Fragment {
                 double latitude = userobj.getLat();
                 double longitude = userobj.getLon();
                 // Create a LatLng object with the initial position
-                LatLng initialPosition = new LatLng(    latitude,longitude);         // 41.0749, 23.5555);
+                LatLng initialPosition = new LatLng(latitude,longitude);//41.0749, 23.5555);//latitude,longitude);         // 41.0749, 23.5555);
                 // Initialize marker options
                 MarkerOptions markerOptions = new MarkerOptions();
                 // Set position of marker
