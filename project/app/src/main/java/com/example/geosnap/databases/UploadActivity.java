@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.geosnap.MainActivity;
 import com.example.geosnap.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -105,7 +106,6 @@ public class UploadActivity extends AppCompatActivity {
                 imageURL = urlImage.toString();
                 uploadData();
                 dialog.dismiss();
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -129,13 +129,10 @@ public class UploadActivity extends AppCompatActivity {
                 .setValue(dataClass).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        try {
                             if (task.isSuccessful()) {
                                 Toast.makeText(UploadActivity.this, "Saved", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        }catch (Exception e) {
-                            Toast.makeText(UploadActivity.this, e.getMessage().toString(), Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(UploadActivity.this, MainActivity.class);
+                                startActivity(intent);
                             }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
