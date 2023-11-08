@@ -36,11 +36,11 @@ public class HomeFragment extends Fragment {
                 // When map is loaded
 
                 UserLocation userobj = new UserLocation();
-                Location loc = userobj.getLocation();
-                double latitude = loc.getLatitude();
-                double longitude = loc.getLongitude();
+                //Location loc = userobj.getLocation();
+                double latitude = userobj.getLat();//loc.getLatitude();
+                //double longitude = userobj.getLon();//loc.getLongitude();
                 // Create a LatLng object with the initial position
-                LatLng initialPosition = new LatLng(latitude,longitude);//41.0749, 23.5555);//latitude,longitude);
+                LatLng initialPosition = new LatLng(41.0749, 23.5555);//41.0749, 23.5555);//latitude,longitude);
                 // Initialize marker options
                 MarkerOptions markerOptions = new MarkerOptions();
                 // Set position of marker
