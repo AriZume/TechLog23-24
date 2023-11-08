@@ -133,6 +133,7 @@ public class UploadActivity extends AppCompatActivity {
                                 Toast.makeText(UploadActivity.this, "Saved", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(UploadActivity.this, MainActivity.class);
                                 startActivity(intent);
+
                             }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
