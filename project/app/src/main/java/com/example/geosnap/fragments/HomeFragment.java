@@ -1,9 +1,6 @@
 package com.example.geosnap.fragments;
 
-import static com.google.android.gms.maps.CameraUpdateFactory.newLatLng;
-
-import android.content.Intent;
-import android.net.Uri;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,15 +11,12 @@ import android.view.ViewGroup;
 
 import com.example.geosnap.R;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.Locale;
 
 public class HomeFragment extends Fragment {
     @Override
@@ -42,10 +36,11 @@ public class HomeFragment extends Fragment {
                 // When map is loaded
 
                 UserLocation userobj = new UserLocation();
-                double latitude = userobj.getLat();
-                double longitude = userobj.getLon();
+                Location loc = userobj.getLocation();
+                double latitude = loc.getLatitude();
+                double longitude = loc.getLongitude();
                 // Create a LatLng object with the initial position
-                LatLng initialPosition = new LatLng(latitude,longitude);//41.0749, 23.5555);//latitude,longitude);         // 41.0749, 23.5555);
+                LatLng initialPosition = new LatLng(latitude,longitude);//41.0749, 23.5555);//latitude,longitude);
                 // Initialize marker options
                 MarkerOptions markerOptions = new MarkerOptions();
                 // Set position of marker
