@@ -40,11 +40,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<DatabaseData> dataList;
     MyAdapter adapter;
     SearchView searchView;
-
-    private final DatabaseReference dbRef = FirebaseDatabase
-            .getInstance().getReference("pictures");
-
-    List<DatabaseData> dataList;
     DatabaseReference dbRef;
     ValueEventListener valueEventListener;
 
@@ -59,15 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
         fab = findViewById(R.id.fab);
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
         searchView = findViewById(R.id.search);
         searchView.clearFocus();
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        dataList = new ArrayList<>();
-        adapter = new MyAdapter(dataList, this);
-        fab= findViewById(R.id.fab);
-        recyclerView= findViewById(R.id.recyclerView);
 
         GridLayoutManager gridLayoutManager= new GridLayoutManager(MainActivity.this, 1);
         recyclerView.setLayoutManager(gridLayoutManager);
@@ -88,15 +76,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                for (DataSnapshot shot : snapshot.getChildren()) {
-                    DatabaseData data = shot.getValue(DatabaseData.class);
-                    dataList.add(data);
-
                 dataList.clear();
                 for (DataSnapshot shot: snapshot.getChildren()){
                     DatabaseData dataClass= shot.getValue(DatabaseData.class);
+                    dataClass.setKey(shot.getKey());
                     dataList.add(dataClass);
                 }
+
                 adapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
@@ -132,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     public void searchList(String text){
         ArrayList<DatabaseData> searchList = new ArrayList<>();
         for (DatabaseData dataClass: dataList ){
-            if (dataClass.getDate().toLowerCase().contains(text.toLowerCase())){
+            if (dataClass.getDataName().toLowerCase().contains(text.toLowerCase())){
                 searchList.add(dataClass);
             }
         }
@@ -140,4 +126,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-}
+

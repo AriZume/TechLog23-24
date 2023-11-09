@@ -26,46 +26,40 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class DetailActivity extends AppCompatActivity {
-
-    TextView detailDesc, detailTitle;
-    ImageView detailImage;
-    FloatingActionButton deleteButton;
-
-    FloatingActionButton editButton;
-    String key = "";
-    String imageUrl = "";
-
-\
 
     public class DetailActivity extends AppCompatActivity {
 
         TextView detailDesc, detailAuthor, detailDate, detailName;
         ImageView detailImage;
+        FloatingActionButton deleteButton;
+        FloatingActionButton editButton;
+        String key = "";
+        String imageUrl = "";
+
 
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_detail);
 
+            detailAuthor = findViewById(R.id.detailAuthor);
             detailDesc = findViewById(R.id.detailDesc);
-
             detailImage = findViewById(R.id.detailImage);
-            detailTitle = findViewById(R.id.detailTitle);
+            detailName = findViewById(R.id.detailName);
             deleteButton = findViewById(R.id.deleteButton);
 
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
                 detailDesc.setText(bundle.getString("Description"));
-                detailTitle.setText(bundle.getString("Title"));
-                key = bundle.getString("Key");
-                imageUrl = bundle.getString("Image");
+                detailName.setText(bundle.getString("Name"));
+                detailAuthor.setText(bundle.getString("Author"));
+                detailDate.setText(bundle.getString("Date"));
                 Glide.with(this).load(bundle.getString("Image")).into(detailImage);
             }
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Android Tutorials");
+                    final DatabaseReference reference = FirebaseDatabase.getInstance().getReference("info");
                     FirebaseStorage storage = FirebaseStorage.getInstance();
 
                     StorageReference storageReference = storage.getReferenceFromUrl(imageUrl);
@@ -84,29 +78,16 @@ public class DetailActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(DetailActivity.this, updateActivity.class)
-                            .putExtra("Title", detailTitle.getText().toString())
+                            .putExtra("Name", detailName.getText().toString())
                             .putExtra("Description", detailDesc.getText().toString())
+                            .putExtra("Date", detailDate.getText().toString())
+                            .putExtra("Author", detailAuthor.getText().toString())
                             .putExtra("Image", imageUrl)
                             .putExtra("Key", key);
                     startActivity(intent);
                 }
             });
 
-            detailName = findViewById(R.id.detailName);
-            detailAuthor = findViewById(R.id.detailAuthor);
-            detailDate = findViewById(R.id.detailDate);
-            detailImage = findViewById(R.id.detailImage);
-
-            Bundle bundle = getIntent().getExtras();
-            if (bundle != null) {
-                detailDesc.setText(bundle.getString("Description"));
-                detailName.setText(bundle.getString("Name"));
-                detailAuthor.setText(bundle.getString("Author"));
-                detailDate.setText(bundle.getString("Date"));
-                Glide.with(this).load(bundle.getString("Image")).into(detailImage);
-            }
-
-
         }
     }
-}
+

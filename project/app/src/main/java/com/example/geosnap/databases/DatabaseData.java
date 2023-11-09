@@ -2,17 +2,6 @@ package com.example.geosnap.databases;
 
 public class DatabaseData {
 
-    private String imageUrl, description, author, date, name;
-    private String key;
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     private String dataAuthor, dataName, dataDesc, dataDate, dataImage, key;
 
 

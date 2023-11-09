@@ -42,7 +42,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:id="@+id/updateName"
+                android:id="@+id/updateAuthor"
                 android:layout_marginTop="20dp"
                 android:padding="16dp"
                 android:hint="Enter your name"
@@ -52,7 +52,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:id="@+id/updateTopic"
+                android:id="@+id/updateName"
                 android:layout_marginTop="20dp"
                 android:padding="16dp"
                 android:hint="Enter topic name"

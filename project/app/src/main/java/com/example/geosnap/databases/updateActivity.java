@@ -36,8 +36,8 @@ import com.google.firebase.storage.UploadTask;
 public class updateActivity extends AppCompatActivity {
     ImageView updateImage;
     Button updateButton;
-    EditText updateDesc, updateTitle, updateDate;
-    String title, desc, date;
+    EditText updateDesc, updateName, updateDate,updateAuthor;
+    String name, desc, date,author;
     String imageUrl;
     String key, oldImageURL;
 
@@ -49,10 +49,11 @@ public class updateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
+        updateAuthor = findViewById(R.id.updateAuthor);
         updateButton = findViewById(R.id.updateButton);
         updateDesc = findViewById(R.id.updateDesc);
         updateImage = findViewById(R.id.updateImage);
-        updateTitle = findViewById(R.id.updateName);
+        updateName = findViewById(R.id.updateName);
         updateDate = findViewById(R.id.updateDate);
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -72,12 +73,16 @@ public class updateActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
             Glide.with(updateActivity.this).load(bundle.getString("Image")).into(updateImage);
-            updateTitle.setText(bundle.getString("Title"));
+            updateName.setText(bundle.getString("Name"));
             updateDesc.setText(bundle.getString("Description"));
+            updateAuthor.setText(bundle.getString("Author"));
+            updateDate.setText(bundle.getString("Date"));
             key = bundle.getString("Key");
             oldImageURL = bundle.getString("Image");
+
+
         }
-        databaseReference = FirebaseDatabase.getInstance().getReference("Android Tutorials").child(key);
+        databaseReference = FirebaseDatabase.getInstance().getReference("info").child(key);
         updateImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,7 +101,7 @@ public class updateActivity extends AppCompatActivity {
         });
     }
     public void saveData(){
-        storageReference = FirebaseStorage.getInstance().getReference().child("Android Images").child(uri.getLastPathSegment());
+        storageReference = FirebaseStorage.getInstance().getReference().child("images").child(uri.getLastPathSegment());
         AlertDialog.Builder builder = new AlertDialog.Builder(updateActivity.this);
         builder.setCancelable(false);
         builder.setView(R.layout.progress_layout);
@@ -120,10 +125,11 @@ public class updateActivity extends AppCompatActivity {
         });
     }
     public void updateData(){
-        title = updateTitle.getText().toString().trim();
-        desc = updateDesc.getText().toString().trim();
-        date = updateDate.getText().toString().trim();
-        DatabaseData dataClass = new DatabaseData(imageUrl,desc, getReferrer().getAuthority(), date,title);
+        author = updateAuthor.getText().toString();
+        name = updateName.getText().toString();
+        desc = updateDesc.getText().toString();
+        date = updateDate.getText().toString();
+        DatabaseData dataClass = new DatabaseData(author,name,desc,date,imageUrl);
         databaseReference.setValue(dataClass).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -131,7 +137,7 @@ public class updateActivity extends AppCompatActivity {
                     StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(oldImageURL);
                     reference.delete();
                     Toast.makeText(updateActivity.this, "Updated", Toast.LENGTH_SHORT).show();
-                    finish();
+                  //  finish();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
