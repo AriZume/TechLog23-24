@@ -30,12 +30,6 @@ import com.google.android.gms.tasks.Task;
 
 public class HomeFragment extends Fragment {
 
-    Location currentLocation;
-    FusedLocationProviderClient fusedLocationProviderClient;
-    private static final int REQUEST_CODE=101;
-
-
-
         @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Initialize view
@@ -44,15 +38,6 @@ public class HomeFragment extends Fragment {
         // Initialize map fragment
         SupportMapFragment supportMapFragment=(SupportMapFragment)
                 getChildFragmentManager().findFragmentById(R.id.google_map);
-
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-
-
-
-
-
 
         // Async map
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
@@ -67,7 +52,7 @@ public class HomeFragment extends Fragment {
                 double latitude = userobj.getLat();//loc.getLatitude();
                 double longitude = userobj.getLon();//loc.getLongitude();
                 // Create a LatLng object with the initial position
-                LatLng initialPosition = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());latitude,longitude);//41.0749, 23.5555);//latitude,longitude);
+                LatLng initialPosition = new LatLng(latitude,longitude);//41.0749, 23.5555);//latitude,longitude);
                 // Initialize marker options
                 MarkerOptions markerOptions = new MarkerOptions();
                 // Set position of marker
@@ -106,32 +91,5 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}
-                    , REQUEST_CODE);
-            return;
-        }
-
-        Task<Location> task= fusedLocationProviderClient.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if(location != null){
-
-                    currentLocation= location;
-                    Toast.makeText(getApplicationContext(),currentLocation.getLatitude(),Toast.LENGTH_LONG)
-                            .show();
-                    SupportMapFragment supportMapFragment=(SupportMapFragment) getSupportFragmentManager()
-                            .findFragmentById(R.id.map);
-                    assert supportMapFragment != null;
-                    supportMapFragment.getMapAsync(MapsActivity.this);
-                }
-            }
-        });
-    }
 }
 
