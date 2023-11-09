@@ -51,7 +51,7 @@ public class UploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
-        uploadButton= findViewById(R.id.uploadButton);
+        uploadButton=(R.id.uploadButton);
         uploadCaption= findViewById(R.id.uploadCaption);
         uploadImage= findViewById(R.id.uploadImage);
         progressBar= findViewById(R.id.progressBar);
@@ -133,3 +133,4 @@ public class UploadActivity extends AppCompatActivity {
             return mime.getExtensionFromMimeType(contentResolver.getType(uri));
         }
 }
+

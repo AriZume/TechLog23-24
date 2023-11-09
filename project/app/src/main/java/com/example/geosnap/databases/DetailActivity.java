@@ -68,7 +68,7 @@ public class DetailActivity extends AppCompatActivity {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    Intent intent = new Intent( DetailActivity.this, )
+                    Intent intent = new Intent( DetailActivity.this,updateActivity.class )
                             .putExtra("Title",detailTitle.getText().toString())
                             .putExtra("Description",detailDesc.getText().toString())
                             .putExtra("Image",imageUrl)

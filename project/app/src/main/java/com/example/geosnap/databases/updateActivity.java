@@ -33,7 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-public class UpdateActivity extends AppCompatActivity {
+public class updateActivity extends AppCompatActivity {
     ImageView updateImage;
     Button updateButton;
     EditText updateDesc, updateTitle, updateDate;
@@ -64,14 +64,14 @@ public class UpdateActivity extends AppCompatActivity {
                             uri = data.getData();
                             updateImage.setImageURI(uri);
                         } else {
-                            Toast.makeText(UpdateActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(updateActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
         );
         Bundle bundle = getIntent().getExtras();
         if (bundle != null){
-            Glide.with(UpdateActivity.this).load(bundle.getString("Image")).into(updateImage);
+            Glide.with(updateActivity.this).load(bundle.getString("Image")).into(updateImage);
             updateTitle.setText(bundle.getString("Title"));
             updateDesc.setText(bundle.getString("Description"));
             key = bundle.getString("Key");
@@ -90,14 +90,14 @@ public class UpdateActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 saveData();
-                Intent intent = new Intent(UpdateActivity.this, MainActivity.class);
+                Intent intent = new Intent(updateActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
     }
     public void saveData(){
         storageReference = FirebaseStorage.getInstance().getReference().child("Android Images").child(uri.getLastPathSegment());
-        AlertDialog.Builder builder = new AlertDialog.Builder(UpdateActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(updateActivity.this);
         builder.setCancelable(false);
         builder.setView(R.layout.progress_layout);
         AlertDialog dialog = builder.create();
@@ -123,21 +123,21 @@ public class UpdateActivity extends AppCompatActivity {
         title = updateTitle.getText().toString().trim();
         desc = updateDesc.getText().toString().trim();
         date = updateDate.getText().toString().trim();
-        DatabaseData dataClass = new DatabaseData(imageUrl,desc,,date,title);
+        DatabaseData dataClass = new DatabaseData(imageUrl,desc, getReferrer().getAuthority(), date,title);
         databaseReference.setValue(dataClass).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
                     StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(oldImageURL);
                     reference.delete();
-                    Toast.makeText(UpdateActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(updateActivity.this, "Updated", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(UpdateActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(updateActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

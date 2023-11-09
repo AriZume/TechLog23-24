@@ -18,7 +18,7 @@
         android:focusable="false"
         android:background="@null"
         app:closeIcon="@drawable/baseline_clear_24"
-        app:searchIcon="@drawable/baseline_youtube_searched_for_24"
+        app:searchIcon="@drawable/baseline_youtube_searched_for_24"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

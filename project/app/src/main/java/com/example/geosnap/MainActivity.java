@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.example.geosnap.databases.DatabaseAdapter;
 import com.example.geosnap.databases.DatabaseData;
+//import com.example.geosnap.databases.UploadActivity;
 import com.example.geosnap.databases.UploadActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseAdapter adapter;
     SearchView searchView;
 
-    private final DatabaseReference dbRef= FirebaseDatabase
+    private final DatabaseReference dbRef = FirebaseDatabase
             .getInstance().getReference("pictures");
 
     @Override
@@ -40,21 +41,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main1);
 
 
-        fab= findViewById(R.id.fab);
-        recyclerView= findViewById(R.id.recyclerView);
+        fab = findViewById(R.id.fab);
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         searchView = findViewById(R.id.search);
         searchView.clearFocus();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        dataList= new ArrayList<>();
-        adapter= new DatabaseAdapter(dataList, this);
+        dataList = new ArrayList<>();
+        adapter = new DatabaseAdapter(dataList, this);
         recyclerView.setAdapter(adapter);
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot shot: snapshot.getChildren()){
-                    DatabaseData data= shot.getValue(DatabaseData.class);
+                for (DataSnapshot shot : snapshot.getChildren()) {
+                    DatabaseData data = shot.getValue(DatabaseData.class);
                     dataList.add(data);
                 }
                 adapter.notifyDataSetChanged();
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        fab.setOnClickListener(new View.OnClickListener() {
+       fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, UploadActivity.class);
@@ -98,4 +99,5 @@ public class MainActivity extends AppCompatActivity {
         }
         adapter.searchDataList(searchList);
     }
+
 }
