@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -37,17 +38,17 @@ public class UserLocation extends Activity {//implements OnMapReadyCallback{
     int PERMISSION_ID = 44;
 
     public double getLat() {
-        getLastLocation();
+       // getLastLocation();
         return latitude;
     }
 
     public double getLon() {
-        getLastLocation();
+       // getLastLocation();
         return longitude;
     }
 
     @SuppressLint("MissingPermission")
-    private void getLastLocation() {
+    public void getLastLocation() {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // check if permissions are given
         if (checkPermissions()) {
