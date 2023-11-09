@@ -40,5 +40,4 @@
         android:backgroundTint="@color/lavender"
         app:tint="@color/white" />
 
-
 </RelativeLayout>

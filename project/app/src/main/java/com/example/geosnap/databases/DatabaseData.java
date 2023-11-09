@@ -1,6 +1,7 @@
 package com.example.geosnap.databases;
 
 public class DatabaseData {
+
     private String imageUrl, description, author, date, name;
     private String key;
 
@@ -12,53 +13,64 @@ public class DatabaseData {
         this.key = key;
     }
 
-    public DatabaseData(String imageUrl, String description, String author, String date, String name) {
-        this.imageUrl = imageUrl;
-        this.description = description;
-        this.author = author;
-        this.date = date;
-        this.name = name;
+    private String dataAuthor, dataName, dataDesc, dataDate, dataImage, key;
+
+
+    public DatabaseData(String dataAuthor, String dataName, String dataDesc, String dataDate, String dataImage) {
+        this.dataAuthor = dataAuthor;
+        this.dataName = dataName;
+        this.dataDesc = dataDesc;
+        this.dataDate = dataDate;
+        this.dataImage = dataImage;
+    }
+    public DatabaseData(){
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getDataAuthor() {
+        return dataAuthor;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setDataAuthor(String dataAuthor) {
+        this.dataAuthor = dataAuthor;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDataName() {
+        return dataName;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDataName(String dataName) {
+        this.dataName = dataName;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getDataDesc() {
+        return dataDesc;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setDataDesc(String dataDesc) {
+        this.dataDesc = dataDesc;
     }
 
-    public String getDate() {
-        return date;
+    public String getDataDate() {
+        return dataDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDataDate(String dataDate) {
+        this.dataDate = dataDate;
     }
 
-
-    public String getName() {
-        return name;
+    public String getDataImage() {
+        return dataImage;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDataImage(String dataImage) {
+        this.dataImage = dataImage;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

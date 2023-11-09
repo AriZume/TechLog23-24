@@ -1,9 +1,13 @@
 package com.example.geosnap;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -11,9 +15,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.geosnap.databases.DatabaseAdapter;
 import com.example.geosnap.databases.DatabaseData;
-//import com.example.geosnap.databases.UploadActivity;
+
+import com.example.geosnap.databases.UploadActivity;
+
+import com.example.geosnap.databases.MyAdapter;
+
 import com.example.geosnap.databases.UploadActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -23,22 +30,31 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fab;
     RecyclerView recyclerView;
+
     ArrayList<DatabaseData> dataList;
-    DatabaseAdapter adapter;
+    MyAdapter adapter;
     SearchView searchView;
 
     private final DatabaseReference dbRef = FirebaseDatabase
             .getInstance().getReference("pictures");
 
+    List<DatabaseData> dataList;
+    DatabaseReference dbRef;
+    ValueEventListener valueEventListener;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main1);
+
 
 
         fab = findViewById(R.id.fab);
@@ -49,21 +65,45 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         dataList = new ArrayList<>();
-        adapter = new DatabaseAdapter(dataList, this);
+        adapter = new MyAdapter(dataList, this);
+        fab= findViewById(R.id.fab);
+        recyclerView= findViewById(R.id.recyclerView);
+
+        GridLayoutManager gridLayoutManager= new GridLayoutManager(MainActivity.this, 1);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+        AlertDialog.Builder builder= new AlertDialog.Builder(MainActivity.this);
+        builder.setCancelable(false);
+        builder.setView(R.layout.progress_layout);
+        AlertDialog dialog= builder.create();
+        dialog.show();
+
+        dataList= new ArrayList<>();
+        MyAdapter adapter= new MyAdapter(MainActivity.this, dataList);
+
         recyclerView.setAdapter(adapter);
-        dbRef.addValueEventListener(new ValueEventListener() {
+        dbRef= FirebaseDatabase.getInstance().getReference("info");
+        dialog.show();
+        valueEventListener= dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
                 for (DataSnapshot shot : snapshot.getChildren()) {
                     DatabaseData data = shot.getValue(DatabaseData.class);
                     dataList.add(data);
+
+                dataList.clear();
+                for (DataSnapshot shot: snapshot.getChildren()){
+                    DatabaseData dataClass= shot.getValue(DatabaseData.class);
+                    dataList.add(dataClass);
                 }
                 adapter.notifyDataSetChanged();
+                dialog.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                dialog.dismiss();
             }
         });
 
@@ -80,13 +120,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        fab.setOnClickListener(new View.OnClickListener() {
 
-       fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, UploadActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
     }
@@ -100,4 +139,5 @@ public class MainActivity extends AppCompatActivity {
         adapter.searchDataList(searchList);
     }
 
+}
 }
