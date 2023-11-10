@@ -5,7 +5,6 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,16 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fab_Bottom_app_bar"
         tools:targetApi="31">
-        <activity
-            android:name=".imagePicker.CollectMetadataActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAh6IqzghpaE3nkKPIeQtizv62vpZ5DL3I" />
 
         <activity
-            android:name=".imagePicker.PostActivity"
+            android:name=".MetadataExtractor.PostActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
