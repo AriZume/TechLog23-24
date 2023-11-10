@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -65,8 +66,9 @@ public class PostActivity extends AppCompatActivity {
                 if (!containsMetadata(metadata)) {
                     throw new RuntimeException("Selected photo does not contain metadata. Please choose another photo.");
                 }
-                File file = new File(getRealPathFromURI(photoUri, context));
+                File file = new File(getRealPathFromURI(photoUri));
                 ImgSize = file.length();
+                Log.d("PhotoMetadata", "File Size: " + ImgSize + " bytes");
                 for (Directory directory : metadata.getDirectories()) {
                     for (Tag tag : directory.getTags()) {
                         if (tag.getTagName().equals("Image Height")) {
@@ -94,18 +96,18 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
-    private String getRealPathFromURI(Uri uri, Context context) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
         if (cursor == null) {
-            return uri.getPath();
+            result = contentURI.getPath();
         } else {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
-            String filePath = cursor.getString(column_index);
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
             cursor.close();
-            return filePath;
         }
+        return result;
     }
     private boolean containsMetadata(Metadata metadata) {
         if (metadata == null) {
