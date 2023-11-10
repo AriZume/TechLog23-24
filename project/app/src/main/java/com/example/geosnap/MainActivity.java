@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fab;
     RecyclerView recyclerView;
-
     ArrayList<DatabaseData> dataList;
     MyAdapter adapter;
     SearchView searchView;
@@ -49,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main1);
-
-
 
         fab = findViewById(R.id.fab);
         recyclerView = findViewById(R.id.recyclerView);
@@ -67,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
         dataList= new ArrayList<>();
-        MyAdapter adapter= new MyAdapter(MainActivity.this, dataList);
+        adapter= new MyAdapter(MainActivity.this, dataList);
 
         recyclerView.setAdapter(adapter);
         dbRef= FirebaseDatabase.getInstance().getReference("info");
@@ -75,14 +72,12 @@ public class MainActivity extends AppCompatActivity {
         valueEventListener= dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                 dataList.clear();
                 for (DataSnapshot shot: snapshot.getChildren()){
                     DatabaseData dataClass= shot.getValue(DatabaseData.class);
                     dataClass.setKey(shot.getKey());
                     dataList.add(dataClass);
                 }
-
                 adapter.notifyDataSetChanged();
                 dialog.dismiss();
             }

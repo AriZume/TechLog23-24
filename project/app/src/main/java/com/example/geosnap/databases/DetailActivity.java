@@ -20,7 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.geosnap.MainActivity;
 import com.example.geosnap.R;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,8 +31,7 @@ import com.google.firebase.storage.StorageReference;
 
         TextView detailDesc, detailAuthor, detailDate, detailName;
         ImageView detailImage;
-        FloatingActionButton deleteButton;
-        FloatingActionButton editButton;
+        FloatingActionButton deleteButton, editButton;
         String key = "";
         String imageUrl = "";
 
@@ -43,10 +42,12 @@ import com.google.firebase.storage.StorageReference;
             setContentView(R.layout.activity_detail);
 
             detailAuthor = findViewById(R.id.detailAuthor);
+            detailDate = findViewById(R.id.detailDate);
             detailDesc = findViewById(R.id.detailDesc);
             detailImage = findViewById(R.id.detailImage);
             detailName = findViewById(R.id.detailName);
             deleteButton = findViewById(R.id.deleteButton);
+            editButton = findViewById(R.id.editButton);
 
             Bundle bundle = getIntent().getExtras();
             if (bundle != null) {
@@ -54,6 +55,8 @@ import com.google.firebase.storage.StorageReference;
                 detailName.setText(bundle.getString("Name"));
                 detailAuthor.setText(bundle.getString("Author"));
                 detailDate.setText(bundle.getString("Date"));
+                key= bundle.getString("Key");
+                imageUrl= bundle.getString("Image");
                 Glide.with(this).load(bundle.getString("Image")).into(detailImage);
             }
             deleteButton.setOnClickListener(new View.OnClickListener() {

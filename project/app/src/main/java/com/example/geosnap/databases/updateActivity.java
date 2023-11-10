@@ -36,25 +36,24 @@ import com.google.firebase.storage.UploadTask;
 public class updateActivity extends AppCompatActivity {
     ImageView updateImage;
     Button updateButton;
-    EditText updateDesc, updateName, updateDate,updateAuthor;
-    String name, desc, date,author;
-    String imageUrl;
-    String key, oldImageURL;
-
-
+    EditText updateDesc, updateName, updateDate, updateAuthor;
+    String name, desc, date,author, imageUrl, key, oldImageURL;
     Uri uri;
     DatabaseReference databaseReference;
     StorageReference storageReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
+
         updateAuthor = findViewById(R.id.updateAuthor);
         updateButton = findViewById(R.id.updateButton);
         updateDesc = findViewById(R.id.updateDesc);
         updateImage = findViewById(R.id.updateImage);
         updateName = findViewById(R.id.updateName);
         updateDate = findViewById(R.id.updateDate);
+
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
@@ -79,8 +78,6 @@ public class updateActivity extends AppCompatActivity {
             updateDate.setText(bundle.getString("Date"));
             key = bundle.getString("Key");
             oldImageURL = bundle.getString("Image");
-
-
         }
         databaseReference = FirebaseDatabase.getInstance().getReference("info").child(key);
         updateImage.setOnClickListener(new View.OnClickListener() {
@@ -125,11 +122,11 @@ public class updateActivity extends AppCompatActivity {
         });
     }
     public void updateData(){
-        author = updateAuthor.getText().toString();
-        name = updateName.getText().toString();
-        desc = updateDesc.getText().toString();
-        date = updateDate.getText().toString();
-        DatabaseData dataClass = new DatabaseData(author,name,desc,date,imageUrl);
+        author = updateAuthor.getText().toString().trim();
+        name = updateName.getText().toString().trim();
+        desc = updateDesc.getText().toString().trim();
+        date = updateDate.getText().toString().trim();
+        DatabaseData dataClass = new DatabaseData(author, name, desc, date, imageUrl);
         databaseReference.setValue(dataClass).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -137,7 +134,7 @@ public class updateActivity extends AppCompatActivity {
                     StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl(oldImageURL);
                     reference.delete();
                     Toast.makeText(updateActivity.this, "Updated", Toast.LENGTH_SHORT).show();
-                  //  finish();
+                    finish();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {

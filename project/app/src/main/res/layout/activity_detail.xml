@@ -42,6 +42,17 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:padding="20dp"
+        android:text="Owner"
+        android:layout_gravity="center"
+        android:id="@+id/detailAuthor"
+        android:textSize="18sp"
+        android:textColor="@color/lavender"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="20dp"
         android:text="Description"
         android:layout_gravity="center"
         android:id="@+id/detailDesc"
@@ -51,6 +62,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.github.clans.fab.FloatingActionMenu
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,6 +76,7 @@
             app:menu_icon="@drawable/baseline_format_list_bulleted_24"
             app:menu_openDirection="up"
             app:menu_showShadow="true">
+
             <com.github.clans.fab.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,6 +85,7 @@
                 app:fab_showShadow="true"
                 app:fab_colorNormal="@color/green"
                 app:fab_size="mini"/>
+
             <com.github.clans.fab.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -80,19 +94,7 @@
                 app:fab_showShadow="true"
                 app:fab_colorNormal="@color/red"
                 app:fab_size="mini"/>
+
         </com.github.clans.fab.FloatingActionMenu>
     </RelativeLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:padding="20dp"
-        android:text="Owner"
-        android:layout_gravity="center"
-        android:id="@+id/detailAuthor"
-        android:textSize="18sp"
-        android:textColor="@color/lavender"/>
-
-
 </LinearLayout>

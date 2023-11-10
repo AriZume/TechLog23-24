@@ -44,6 +44,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 intent.putExtra("Description", dataList.get(holder.getAdapterPosition()).getDataDesc());
                 intent.putExtra("Name", dataList.get(holder.getAdapterPosition()).getDataName());
                 intent.putExtra("Date", dataList.get(holder.getAdapterPosition()).getDataDate());
+                intent.putExtra("Key", dataList.get(holder.getAdapterPosition()).getKey());
                 context.startActivity(intent);
             }
         });

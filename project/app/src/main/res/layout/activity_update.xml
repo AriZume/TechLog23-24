@@ -30,7 +30,7 @@
                 android:text="Update Data"
                 android:textSize="30sp"
                 android:textAlignment="center"
-                android:textColor="@color/black"/>
+                android:textColor="@color/lavender"/>
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
