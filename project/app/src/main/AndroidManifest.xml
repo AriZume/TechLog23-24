@@ -34,8 +34,7 @@
             android:exported="false" />
         <activity
             android:name=".databases.UploadActivity"
-            android:exported="false"
-            android:theme="@style/Theme.UploadActivity" />
+            android:exported="false" />
         <activity
             android:name=".MetadataExtractor.PostActivity"
             android:exported="false"

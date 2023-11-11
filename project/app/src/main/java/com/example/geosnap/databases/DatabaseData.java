@@ -2,64 +2,91 @@ package com.example.geosnap.databases;
 
 public class DatabaseData {
 
-    private String dataAuthor, dataName, dataDesc, dataDate, dataImage, key;
+    private double latitude, longitude, imgSize;
+    String imgHeight,  imgWidth, imageURL;
+    String dateTime, tag, desc;
 
-
-    public DatabaseData(String dataAuthor, String dataName, String dataDesc, String dataDate, String dataImage) {
-        this.dataAuthor = dataAuthor;
-        this.dataName = dataName;
-        this.dataDesc = dataDesc;
-        this.dataDate = dataDate;
-        this.dataImage = dataImage;
-    }
-    public DatabaseData(){
-    }
-
-    public String getDataAuthor() {
-        return dataAuthor;
-    }
-
-    public void setDataAuthor(String dataAuthor) {
-        this.dataAuthor = dataAuthor;
+    public DatabaseData(double latitude, double longitude, double imgSize, String imgHeight, String imgWidth, String imageURL, String dateTime, String tag, String desc) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.imgSize = imgSize;
+        this.imgHeight = imgHeight;
+        this.imgWidth = imgWidth;
+        this.imageURL = imageURL;
+        this.dateTime = dateTime;
+        this.tag = tag;
+        this.desc = desc;
     }
 
-    public String getDataName() {
-        return dataName;
+    public String getTag() {
+        return tag;
     }
 
-    public void setDataName(String dataName) {
-        this.dataName = dataName;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
-    public String getDataDesc() {
-        return dataDesc;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setDataDesc(String dataDesc) {
-        this.dataDesc = dataDesc;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
-    public String getDataDate() {
-        return dataDate;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setDataDate(String dataDate) {
-        this.dataDate = dataDate;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
-    public String getDataImage() {
-        return dataImage;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setDataImage(String dataImage) {
-        this.dataImage = dataImage;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
-    public String getKey() {
-        return key;
+    public double getImgSize() {
+        return imgSize;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setImgSize(double imgSize) {
+        this.imgSize = imgSize;
+    }
+
+    public String getImgHeight() {
+        return imgHeight;
+    }
+
+    public void setImgHeight(String imgHeight) {
+        this.imgHeight = imgHeight;
+    }
+
+    public String getImgWidth() {
+        return imgWidth;
+    }
+
+    public void setImgWidth(String imgWidth) {
+        this.imgWidth = imgWidth;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 }
