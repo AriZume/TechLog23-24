@@ -5,14 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/lavender"
     tools:context=".fragments.HomeFragment">
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Home"
-        android:gravity="center"
-        android:textSize="30sp"
-        android:textColor="@color/white"/>
 
     <fragment
         android:layout_width="match_parent"
