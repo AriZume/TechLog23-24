@@ -1,124 +1,74 @@
 package com.example.geosnap;
 
+import com.example.geosnap.databinding.ActivityMainBinding;
+import com.example.geosnap.fragments.HomeFragment;
+import com.example.geosnap.fragments.SearchFragment;
+
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-
-import androidx.recyclerview.widget.RecyclerView;
-
-
-import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.View;
+import android.content.Intent;
 
-import com.example.geosnap.databases.DatabaseData;
-
-import com.example.geosnap.databases.UploadActivity;
-
-import com.example.geosnap.databases.MyAdapter;
-
-import com.example.geosnap.databases.UploadActivity;
+import com.example.geosnap.MetadataExtractor.PostActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback{
 
-    FloatingActionButton fab;
-    RecyclerView recyclerView;
-    ArrayList<DatabaseData> dataList;
-    MyAdapter adapter;
-    SearchView searchView;
-    DatabaseReference dbRef;
-    ValueEventListener valueEventListener;
-
-
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main1);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        fab = findViewById(R.id.fab);
-        recyclerView = findViewById(R.id.recyclerView);
-        searchView = findViewById(R.id.search);
-        searchView.clearFocus();
+        Fragment fragment = new HomeFragment();
+        replaceFragment(fragment);
+        getSupportFragmentManager()
+                .beginTransaction().replace(R.id.frame_layout,fragment)
+                .commit();
 
-        GridLayoutManager gridLayoutManager= new GridLayoutManager(MainActivity.this, 1);
-        recyclerView.setLayoutManager(gridLayoutManager);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF252526")));
 
-        AlertDialog.Builder builder= new AlertDialog.Builder(MainActivity.this);
-        builder.setCancelable(false);
-        builder.setView(R.layout.progress_layout);
-        AlertDialog dialog= builder.create();
-        dialog.show();
-
-        dataList= new ArrayList<>();
-        adapter= new MyAdapter(MainActivity.this, dataList);
-
-        recyclerView.setAdapter(adapter);
-        dbRef= FirebaseDatabase.getInstance().getReference("info");
-        dialog.show();
-        valueEventListener= dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                dataList.clear();
-                for (DataSnapshot shot: snapshot.getChildren()){
-                    DatabaseData dataClass= shot.getValue(DatabaseData.class);
-                    dataClass.setKey(shot.getKey());
-                    dataList.add(dataClass);
-                }
-                adapter.notifyDataSetChanged();
-                dialog.dismiss();
+        binding.bottomNavigationView.setBackground(null);
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if(id == R.id.home){
+                replaceFragment(new HomeFragment());
+            } else if (id == R.id.search) {
+                replaceFragment(new SearchFragment());
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                dialog.dismiss();
-            }
+            return false;
         });
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                searchList(newText);
-                return true;
-            }
-        });
-
-        fab.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, UploadActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-    public void searchList(String text){
-        ArrayList<DatabaseData> searchList = new ArrayList<>();
-        for (DatabaseData dataClass: dataList ){
-            if (dataClass.getDataName().toLowerCase().contains(text.toLowerCase())){
-                searchList.add(dataClass);
-            }
-        }
-        adapter.searchDataList(searchList);
+        FloatingActionButton postFab = findViewById(R.id.postFab);
+        postFab.setOnClickListener(v -> openPostActivity());
     }
 
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.commit();
+    }
+
+    public void openPostActivity(){
+        Intent intent = new Intent(MainActivity.this, PostActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+
+    }
 }
-
