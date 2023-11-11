@@ -36,7 +36,6 @@ android {
         dataBinding = true
     }
 }
-
 dependencies {
     implementation ("com.drewnoakes:metadata-extractor:2.16.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
