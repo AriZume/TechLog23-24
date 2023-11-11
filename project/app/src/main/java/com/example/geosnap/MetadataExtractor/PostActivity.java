@@ -23,7 +23,6 @@ import com.example.geosnap.R;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -39,7 +38,6 @@ public class PostActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, 3);
         });
-
     }
 
 
@@ -47,7 +45,6 @@ public class PostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK && data != null){
-
             Uri selectedImage = data.getData();
             ImageView imageView = findViewById(R.id.selectPhoto);
             //selectPhoto is the clickable imageView id
@@ -84,7 +81,6 @@ public class PostActivity extends AppCompatActivity {
                         // Get GPS information
                         Longitude = gpsDirectory.getGeoLocation().getLongitude();
                         Latitude = gpsDirectory.getGeoLocation().getLatitude();
-
                     }
                 }
                 inputStream.close();
@@ -113,12 +109,7 @@ public class PostActivity extends AppCompatActivity {
         if (metadata == null) {
             return false;
         }
-
         Iterable<Directory> directories = metadata.getDirectories();
-        if (directories == null || !directories.iterator().hasNext()) {
-            return false;
-        }
-
-        return true;
+        return directories != null && directories.iterator().hasNext();
     }
 }
