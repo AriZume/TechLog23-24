@@ -1,5 +1,6 @@
 package com.example.geosnap;
 
+import com.example.geosnap.databinding.ActivityMainBinding;
 import com.example.geosnap.fragments.HomeFragment;
 import com.example.geosnap.fragments.SearchFragment;
 
@@ -14,7 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.content.Intent;
 
-import com.example.geosnap.databinding.ActivityMainBinding;
+import com.example.geosnap.MetadataExtractor.PostActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.android.gms.maps.GoogleMap;
