@@ -6,6 +6,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -33,11 +35,15 @@ public class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        ImageView gallery = findViewById(R.id.selectPhoto);
+        ImageView gallery = findViewById(R.id.uploadImage);
         gallery.setOnClickListener(view -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, 3);
         });
+
+        getSupportActionBar().setTitle("Upload...");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF252526")));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -46,7 +52,7 @@ public class PostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK && data != null){
             Uri selectedImage = data.getData();
-            ImageView imageView = findViewById(R.id.selectPhoto);
+            ImageView imageView = findViewById(R.id.uploadImage);
             //selectPhoto is the clickable imageView id
             imageView.setImageURI(selectedImage);
             extractMetadata(this,selectedImage);
@@ -81,6 +87,8 @@ public class PostActivity extends AppCompatActivity {
                         // Get GPS information
                         Longitude = gpsDirectory.getGeoLocation().getLongitude();
                         Latitude = gpsDirectory.getGeoLocation().getLatitude();
+                        Log.d("Longitude", "extractMetadata: " + Longitude);
+                        Log.d("Latitude", "extractMetadata: " + Latitude);
                     }
                 }
                 inputStream.close();
@@ -105,6 +113,7 @@ public class PostActivity extends AppCompatActivity {
         }
         return result;
     }
+
     private boolean containsMetadata(Metadata metadata) {
         if (metadata == null) {
             return false;
