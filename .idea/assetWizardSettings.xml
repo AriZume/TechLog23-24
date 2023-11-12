@@ -3,9 +3,41 @@
   <component name="WizardSettings">
     <option name="children">
       <map>
-        <entry key="imageWizard">
+        <entry key="vectorWizard">
           <value>
-            <PersistentState />
+            <PersistentState>
+              <option name="children">
+                <map>
+                  <entry key="vectorAssetStep">
+                    <value>
+                      <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="clipartAsset">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/add_circle_outline/baseline_add_circle_outline_24.xml" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                        <option name="values">
+                          <map>
+                            <entry key="outputName" value="ic_add_circle_outline" />
+                            <entry key="sourceFile" value="C:\Users\etzer\AndroidStudioProjects\TechLog23-24" />
+                          </map>
+                        </option>
+                      </PersistentState>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </PersistentState>
           </value>
         </entry>
         <entry key="vectorWizard">
@@ -23,7 +55,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../Android_Studio_SDK/icons/material/materialicons/add_to_photos/baseline_add_to_photos_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/mode_edit_outline/baseline_mode_edit_outline_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,8 +65,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_addphoto" />
-                            <entry key="sourceFile" value="C:\Users\etzer\AndroidStudioProjects\TechLog23-24" />
+                            <entry key="color" value="8692f7" />
+                            <entry key="outputName" value="baseline_edit_24" />
+                            <entry key="sourceFile" value="C:\Android Studio Projects\TechLog23-24" />
                           </map>
                         </option>
                       </PersistentState>

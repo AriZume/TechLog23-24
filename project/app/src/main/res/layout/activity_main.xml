@@ -10,20 +10,23 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lavender"
         tools:context=".MainActivity">
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/frame_layout"/>
+
         <com.google.android.material.bottomappbar.BottomAppBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/bottomAppBar"
             android:layout_gravity="bottom"
             android:background="@color/white"
+            android:backgroundTint="@color/colorPrimaryDark"
             app:fabCradleMargin="10dp"
             app:fabCradleRoundedCornerRadius="50dp">
+
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -32,6 +35,7 @@
                 app:labelVisibilityMode="labeled"
                 android:background="@android:color/transparent"
                 app:menu="@menu/bottom_nav_menu"/>
+
         </com.google.android.material.bottomappbar.BottomAppBar>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -42,6 +46,8 @@
             android:src="@drawable/ic_add"
             app:layout_anchor="@id/bottomAppBar"
             app:maxImageSize="40dp"
-            app:tint ="@color/lavender"/>
+            app:tint ="@color/colorPrimaryDark"/>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
