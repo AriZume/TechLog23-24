@@ -8,6 +8,13 @@
     android:background="@color/colorPrimaryDark"
     tools:context=".MetadataExtractor.PostActivity">
 
+    <View
+        android:id="@+id/dimmingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#60000000"
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/uploadImage"
         android:layout_width="411dp"

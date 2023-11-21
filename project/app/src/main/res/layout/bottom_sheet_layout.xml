@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_bg">
+
+    <TextView
+        android:id="@+id/chooseTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Choose a tag"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="25dp"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RadioButton
+            android:id="@+id/rbTagNone"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:text="None"
+            android:background="@drawable/rbnone_bg"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp" />
+
+        <RadioButton
+            android:id="@+id/rbTag1"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:text="City"
+            android:background="@drawable/rb1_bg"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
+
+        <RadioButton
+            android:id="@+id/rbTag2"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:text="Farming"
+            android:background="@drawable/rb2_bg"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
+
+        <RadioButton
+            android:id="@+id/rbTag3"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:text="Nature"
+            android:background="@drawable/rb3_bg"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
+
+        <RadioButton
+            android:id="@+id/rbTag4"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:text="Sightseeing"
+            android:background="@drawable/rb4_bg"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
+
+        <RadioButton
+            android:id="@+id/rbTag5"
+            android:layout_width="120dp"
+            android:layout_height="32dp"
+            android:text="Tsonidis"
+            android:background="@drawable/rb5_bg"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"/>
+    </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end">
+
+        <Button
+            android:id="@+id/saveTagBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:text="Save"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
+
+</LinearLayout>
