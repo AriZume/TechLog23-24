@@ -1,6 +1,7 @@
 package com.example.geosnap;
 
-import com.example.geosnap.fragments.HomeFragment;
+import com.example.geosnap.databinding.ActivityMainBinding;
+import com.example.geosnap.fragments.MapFragment;
 import com.example.geosnap.fragments.SearchFragment;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.content.Intent;
 
-import com.example.geosnap.databinding.ActivityMainBinding;
+import com.example.geosnap.MetadataExtractor.PostActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Fragment fragment = new HomeFragment();
+        Fragment fragment = new MapFragment();
         replaceFragment(fragment);
         getSupportFragmentManager()
                 .beginTransaction().replace(R.id.frame_layout,fragment)
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if(id == R.id.home){
-                replaceFragment(new HomeFragment());
+                replaceFragment(new MapFragment());
             } else if (id == R.id.search) {
                 replaceFragment(new SearchFragment());
             }
@@ -66,8 +67,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startActivity(intent);
     }
 
+
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
 
     }
+
+
+
 }
