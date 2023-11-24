@@ -92,7 +92,7 @@
                 android:id="@+id/deleteButton"
                 android:src="@drawable/baseline_delete_24"
                 app:fab_showShadow="true"
-                app:fab_colorNormal="@color/red"
+                app:fab_colorNormal="@color/green"
                 app:fab_size="mini"/>
 
         </com.github.clans.fab.FloatingActionMenu>
