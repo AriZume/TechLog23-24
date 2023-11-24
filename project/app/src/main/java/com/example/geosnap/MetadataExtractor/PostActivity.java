@@ -48,7 +48,7 @@ public class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        ImageView uploadImg = findViewById(R.id.uploadImage);
+        ImageView imageView = findViewById(R.id.imageView);
         imageMetadataUtil= new ImageMetadataUtil();
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
@@ -58,15 +58,15 @@ public class PostActivity extends AppCompatActivity {
                         if (data != null && data.getData() != null) {
                             //Get image from gallery
                             imageUri = data.getData();
-                            uploadImg.setImageURI(imageUri);
+                            imageView.setImageURI(imageUri);
                             imageMetadataUtil.extractMetadata(PostActivity.this, imageUri,getContentResolver());
                         }
                         if (data.hasExtra("data")) {
 
-                                //Capture picture from camera
-                                imageBitmap = (Bitmap) data.getExtras().get("data");
-                                imageUri = imageMetadataUtil.getImageUri(PostActivity.this, imageBitmap);
-                                uploadImg.setImageURI(imageUri);
+                            //Capture picture from camera
+                            imageBitmap = (Bitmap) data.getExtras().get("data");
+                            imageUri = imageMetadataUtil.getImageUri(PostActivity.this, imageBitmap);
+                            imageView.setImageURI(imageUri);
                             imageMetadataUtil.extractMetadata(PostActivity.this, imageUri,getContentResolver());
                         }
                     }
@@ -76,7 +76,7 @@ public class PostActivity extends AppCompatActivity {
                 }
         );
 
-        uploadImg.setOnClickListener(view -> {
+        imageView.setOnClickListener(view -> {
             // Create an intent to show the dialog to pick an image
             Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
             photoPickerIntent.setType("image/*");
@@ -133,7 +133,7 @@ public class PostActivity extends AppCompatActivity {
     public void uploadData(String imageURL) {
         String tag = tagBtn.getText().toString();
         if(tag.equals("+ add a tag"))
-            tag = "no tag";
+            tag = "none";
         String description = etDescription.getText().toString();
 
         DatabaseData dataClass = new DatabaseData(imageMetadataUtil.getLatitude(), imageMetadataUtil.getLongitude(), imageMetadataUtil.getImgSize(), imageMetadataUtil.getImgHeight(), imageMetadataUtil.getImgWidth(), imageURL, imageMetadataUtil.getDateTime(), tag, description);
@@ -146,6 +146,7 @@ public class PostActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 }).addOnFailureListener(e -> Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show());
+
     }
 
 

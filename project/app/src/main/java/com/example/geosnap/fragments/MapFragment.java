@@ -23,13 +23,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+
+import java.util.ArrayList;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap googleMap;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
-
+    ArrayList<LatLng> locations;
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private boolean isInitialLocationUpdate = true;
     @Nullable
@@ -50,10 +54,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         createLocationCallback();
     }
 
+
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
         updateLocationUI();
+        setLocationsOnMap();
         startLocationUpdates();
     }
 
@@ -129,6 +135,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 updateLocationUI();
                 startLocationUpdates();
             }
+        }
+    }
+
+    private void setLocationsOnMap(){
+        locations = new ArrayList<>();
+        locations.add(new LatLng(-8.21021, 9.66914));
+        locations.add(new LatLng(26.76423, 85.56379));
+        locations.add(new LatLng(12.64455, 72.75553));
+        for(LatLng location : locations) {
+            googleMap.addMarker(new MarkerOptions().position(location).title("TEST"));
         }
     }
 }
