@@ -15,6 +15,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,6 +38,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.Arrays;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -228,9 +233,18 @@ public class PostActivity extends AppCompatActivity {
                     int selectedId = bottomSheetRadioGroup.getCheckedRadioButtonId();
                     RadioButton radioButton = bottomSheetDialog.findViewById(selectedId);
 
-                    if (radioButton != null) {
-                        Toast.makeText(PostActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
+                    // Get the background drawable of the selected radio button
+                    Drawable backgroundDrawable = radioButton.getBackground();
+
+                    String selectedTag = radioButton.getText().toString();
+                    Toast.makeText(PostActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
+
+                    if (tagBtn != null) {
+                        // Set the background drawable for addTagBtn
+                        tagBtn.setBackground(backgroundDrawable);
+                        tagBtn.setText(selectedTag);
                     }
+
                     bottomSheetDialog.dismiss();  // Dismiss the Bottom Sheet Dialog
 
                     // Set the dimming view back to gone
@@ -244,4 +258,5 @@ public class PostActivity extends AppCompatActivity {
         // Show the Bottom Sheet Dialog
         bottomSheetDialog.show();
     }
+
 }
