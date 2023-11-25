@@ -3,7 +3,11 @@ package com.example.geosnap.MetadataExtractor;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.app.Activity;
@@ -36,20 +40,36 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+
 public class PostActivity extends AppCompatActivity {
 
     Uri imageUri;
     EditText etDescription;
-    Button cancelBtn, uploadBtn, tagBtn;
+    Button cancelBtn, uploadBtn, tagBtn, btnSelectImages;
     Bitmap imageBitmap;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
+    private final int REQUEST_PERMISSION_CODE=35;
+    private final int PICK_IMAGE_CODE=39;
+    private ArrayList<Uri> imagesUri;
+    private ViewPager uploadImg;
     ImageMetadataUtil imageMetadataUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        ImageView uploadImg = findViewById(R.id.uploadImage);
+        uploadImg = findViewById(R.id.uploadImage);
+        btnSelectImages = findViewById(R.id.btnSelectImages);
+        imagesUri= new ArrayList<>();
         imageMetadataUtil= new ImageMetadataUtil();
+
+        btnSelectImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkUserPermission();
+            }
+        });
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -58,7 +78,7 @@ public class PostActivity extends AppCompatActivity {
                         if (data != null && data.getData() != null) {
                             //Get image from gallery
                             imageUri = data.getData();
-                            uploadImg.setImageURI(imageUri);
+                            //uploadImg.setImageURI(imageUri);
                             imageMetadataUtil.extractMetadata(PostActivity.this, imageUri,getContentResolver());
                         }
                         if (data.hasExtra("data")) {
@@ -66,7 +86,7 @@ public class PostActivity extends AppCompatActivity {
                                 //Capture picture from camera
                                 imageBitmap = (Bitmap) data.getExtras().get("data");
                                 imageUri = imageMetadataUtil.getImageUri(PostActivity.this, imageBitmap);
-                                uploadImg.setImageURI(imageUri);
+                                //uploadImg.setImageURI(imageUri);
                             imageMetadataUtil.extractMetadata(PostActivity.this, imageUri,getContentResolver());
                         }
                     }
@@ -95,6 +115,7 @@ public class PostActivity extends AppCompatActivity {
         uploadBtn = findViewById(R.id.uploadButton);
         tagBtn = findViewById(R.id.addTagBtn);
 
+
         tagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,6 +126,28 @@ public class PostActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Upload...");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF252526")));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void checkUserPermission(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                !=PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(
+                    this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_CODE);
+        } else {
+            pickImages();
+        }
+    }
+
+    private void pickImages(){
+        Intent intent= new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            startActivityForResult(intent, PICK_IMAGE_CODE);
+
+            if (imagesUri!=null){
+                imagesUri.clear();
+            }
     }
 
     public void saveData() {
@@ -148,7 +191,6 @@ public class PostActivity extends AppCompatActivity {
                 }).addOnFailureListener(e -> Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show());
     }
 
-
     public void saveOnClick(View view){
         saveData();
     }
@@ -166,6 +208,39 @@ public class PostActivity extends AppCompatActivity {
                 Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
             }
         }
+
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                pickImages();
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_CODE && resultCode == RESULT_OK){
+            if (data!=null){
+                if (data.getClipData()!=null) {
+                    int count = data.getClipData().getItemCount();
+
+                    for (int i = 0; i < count; i++) {
+                        imagesUri.add(data.getClipData().getItemAt(i).getUri());
+                    }
+                }
+            } else {
+                imagesUri.add(data.getData());
+            }
+
+            setAdapter();
+        }
+    }
+
+    private void setAdapter(){
+        ImagesAdapter imagesAdapter= new ImagesAdapter(this, imagesUri);
+        uploadImg.setAdapter(imagesAdapter);
     }
 
     public boolean checkForCamPermission(){
