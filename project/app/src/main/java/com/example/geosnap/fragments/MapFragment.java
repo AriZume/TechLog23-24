@@ -43,7 +43,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private boolean isInitialLocationUpdate = true;
 
-    ArrayList<LatLng> locations = new ArrayList<>();
+    private ArrayList<LatLng> locations = new ArrayList<>();
 
 
     @Nullable
@@ -150,6 +150,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         }
     }
 
+    @Override
+    public void onLocationsLoaded(ArrayList<LatLng> locations) {
+        // Call the method to set locations on the map
+        setLocationsOnMap();
+    }
+
+    private void setLocationsOnMap() {
+        //Log.d("locations", "onChildAdded: " + locations.toString());
+        for (LatLng location : locations) {
+            googleMap.addMarker(new MarkerOptions().position(location).title("TEST"));
+
+        }
+    }
+
     private void retrieveData(OnLocationsLoadedListener listener) {
         // Get a reference to our posts
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -161,11 +175,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
                 DatabaseData newInfo = dataSnapshot.getValue(DatabaseData.class);
                 Log.d("lat", "onChildAdded: " + newInfo.getLatitude());
                 Log.d("lng", "onChildAdded: " + newInfo.getLongitude());
-
                 locations.add(new LatLng(newInfo.getLatitude(),newInfo.getLongitude()));
                 Log.d("locations1", "onChildAdded: " + locations.toString());
-
-
                 Log.d("key", "onChildAdded: " + prevChildKey);
 
                 if(listener != null){
@@ -189,28 +200,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-    }
-
-    private void setLocationsOnMap() {
-        //locations = new ArrayList<>();
-        //locations.add(new LatLng(-8.21021, 9.66914));
-        //locations.add(new LatLng(26.76423, 85.56379));
-        //locations.add(new LatLng(12.64455, 72.75553));
-        Log.d("locations", "onChildAdded: " + locations.toString());
-        for (LatLng location : locations) {
-            googleMap.addMarker(new MarkerOptions().position(location).title("TEST"));
-
-        }
-    }
-
-
-
-    @Override
-    public void onLocationsLoaded(ArrayList<LatLng> locations) {
-        // Use the populated locations ArrayList here
-        Log.d("Locations", "Locations loaded: " + locations.toString());
-
-        // Call the method to set locations on the map
-        setLocationsOnMap();
     }
 }
