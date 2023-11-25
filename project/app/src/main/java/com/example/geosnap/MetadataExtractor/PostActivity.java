@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.foundation.gestures.TapGestureDetectorKt;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -22,6 +23,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,31 +66,31 @@ public class PostActivity extends AppCompatActivity {
         imagesUri= new ArrayList<>();
         imageMetadataUtil= new ImageMetadataUtil();
 
-        btnSelectImages.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkUserPermission();
-            }
-        });
-
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        if (data != null && data.getData() != null) {
+                        if (data != null && data.getClipData() != null) {
                             //Get image from gallery
-                            imageUri = data.getData();
-                            //uploadImg.setImageURI(imageUri);
-                            imageMetadataUtil.extractMetadata(PostActivity.this, imageUri,getContentResolver());
+                            int count = data.getClipData().getItemCount();
+
+                            for (int i = 0; i < count; i++) {
+                                Uri uri= data.getClipData().getItemAt(i).getUri();
+                                imagesUri.add(uri);
+                                imageMetadataUtil.extractMetadata(PostActivity.this, uri, getContentResolver());
+                            }
+                            //imageMetadataUtil.extractMetadata(PostActivity.this, imageUri, getContentResolver());
+                        } else {
+                        imagesUri.add(data.getData());
                         }
                         if (data.hasExtra("data")) {
-
                                 //Capture picture from camera
                                 imageBitmap = (Bitmap) data.getExtras().get("data");
                                 imageUri = imageMetadataUtil.getImageUri(PostActivity.this, imageBitmap);
-                                //uploadImg.setImageURI(imageUri);
-                            imageMetadataUtil.extractMetadata(PostActivity.this, imageUri,getContentResolver());
+                                //uploadImg.setAdapter(imageUri);
+                            imageMetadataUtil.extractMetadata(PostActivity.this, imageUri, getContentResolver());
                         }
+                        mySetAdapter();
                     }
                     else {
                         Toast.makeText(PostActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
@@ -96,7 +98,7 @@ public class PostActivity extends AppCompatActivity {
                 }
         );
 
-        uploadImg.setOnClickListener(view -> {
+        /*uploadImg.setOnClickListener(view -> {
             // Create an intent to show the dialog to pick an image
             Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
             photoPickerIntent.setType("image/*");
@@ -109,12 +111,28 @@ public class PostActivity extends AppCompatActivity {
             activityResultLauncher.launch(chooserIntent);
             checkForCamPermission();
         });
+        */
 
         etDescription = findViewById(R.id.etDescription);
         cancelBtn = findViewById(R.id.cancelButton);
         uploadBtn = findViewById(R.id.uploadButton);
         tagBtn = findViewById(R.id.addTagBtn);
 
+        btnSelectImages.setOnClickListener(view -> {
+                checkUserPermission();
+                // Create an intent to show the dialog to pick an image
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                // Create an Intent to capture a photo from the camera
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                // Create a chooser dialog for the user to pick between gallery and camera
+                Intent chooserIntent = Intent.createChooser(photoPickerIntent, "Select Images");
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
+                // Launch the chooser dialog
+                activityResultLauncher.launch(chooserIntent);
+                checkForCamPermission();
+        });
 
         tagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,26 +146,9 @@ public class PostActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void checkUserPermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                !=PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(
-                    this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_PERMISSION_CODE);
-        } else {
-            pickImages();
-        }
-    }
-
-    private void pickImages(){
-        Intent intent= new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            startActivityForResult(intent, PICK_IMAGE_CODE);
-
-            if (imagesUri!=null){
-                imagesUri.clear();
-            }
+    private void mySetAdapter(){
+        ImagesAdapter imagesAdapter= new ImagesAdapter(this, imagesUri);
+        uploadImg.setAdapter(imagesAdapter);
     }
 
     public void saveData() {
@@ -211,36 +212,11 @@ public class PostActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_PERMISSION_CODE) {
             if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                pickImages();
+                Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_CODE && resultCode == RESULT_OK){
-            if (data!=null){
-                if (data.getClipData()!=null) {
-                    int count = data.getClipData().getItemCount();
-
-                    for (int i = 0; i < count; i++) {
-                        imagesUri.add(data.getClipData().getItemAt(i).getUri());
-                    }
-                }
-            } else {
-                imagesUri.add(data.getData());
-            }
-
-            setAdapter();
-        }
-    }
-
-    private void setAdapter(){
-        ImagesAdapter imagesAdapter= new ImagesAdapter(this, imagesUri);
-        uploadImg.setAdapter(imagesAdapter);
     }
 
     public boolean checkForCamPermission(){
@@ -249,6 +225,15 @@ public class PostActivity extends AppCompatActivity {
              return true;
         }
         return false;
+    }
+
+    private void checkUserPermission(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                !=PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION_CODE);
+        }
     }
 
     private void openBottomSheet() {

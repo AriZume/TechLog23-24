@@ -6,6 +6,9 @@ public class DatabaseData {
     String imgHeight,  imgWidth, imageURL;
     String dateTime, tag, desc;
 
+    public DatabaseData() {
+    }
+
     public DatabaseData(double latitude, double longitude, double imgSize, String imgHeight, String imgWidth, String imageURL, String dateTime, String tag, String desc) {
         this.latitude = latitude;
         this.longitude = longitude;
