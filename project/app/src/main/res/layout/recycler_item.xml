@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="120dp"
             android:layout_height="30dp"
-            android:id="@+id/recName"
+            android:id="@+id/recTag"
             android:text="tag"
             android:textColor="@color/lavender"
             android:textSize="20sp"
@@ -44,7 +44,7 @@
             android:layout_height="30dp"
             android:id="@+id/recDate"
             android:text="Date"
-            android:layout_toEndOf="@id/recName"
+            android:layout_toEndOf="@id/recTag"
             android:layout_marginTop="20dp"
             android:layout_marginStart="90dp"
             android:textAlignment="center"
@@ -59,7 +59,7 @@
             android:textColor="@color/lavender"
             android:textSize="14sp"
             android:layout_toEndOf="@id/recImage"
-            android:layout_below="@id/recName"
+            android:layout_below="@id/recTag"
             android:layout_marginStart="20dp"
             android:maxLines="1"
             android:layout_marginBottom="12dp"/>
