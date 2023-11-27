@@ -69,4 +69,5 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.14.2@aar")
 
     implementation("com.google.android.gms:play-services-location:19.0.1")
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
 }
