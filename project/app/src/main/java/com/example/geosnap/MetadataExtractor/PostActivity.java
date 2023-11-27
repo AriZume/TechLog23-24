@@ -128,6 +128,11 @@ public class PostActivity extends AppCompatActivity {
                 photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 // Create an Intent to capture a photo from the camera
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                //gia polles fwtografies apo thn kamera:
+                //Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+                //alla prepei na oristei to limit mesa sto activity result
+
                 // Create a chooser dialog for the user to pick between gallery and camera
                 Intent chooserIntent = Intent.createChooser(photoPickerIntent, "Select Images");
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
@@ -155,28 +160,32 @@ public class PostActivity extends AppCompatActivity {
     }
 
     public void saveData() {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images")
-                .child(imageUri.getLastPathSegment());
+        for (int i=0; i<imagesUri.size(); i++) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images")
+                    .child(imagesUri.get(i).getLastPathSegment());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(PostActivity.this);
-        builder.setCancelable(false);
-        builder.setView(R.layout.progress_layout);
-        AlertDialog dialog = builder.create();
-        dialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(PostActivity.this);
+            builder.setCancelable(false);
+            builder.setView(R.layout.progress_layout);
+            AlertDialog dialog = builder.create();
+            dialog.show();
 
-        storageReference.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
-            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-            while (!uriTask.isComplete()) ;
-            Uri urlImage = uriTask.getResult();
-            String imageURL = urlImage.toString();
-            uploadData(imageURL);
-            dialog.dismiss();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-            dialog.dismiss();
-        });
+            storageReference.putFile(imagesUri.get(i)).addOnSuccessListener(taskSnapshot -> {
+                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                while (!uriTask.isComplete()) ;
+                Uri urlImage = uriTask.getResult();
+                String imageURL = urlImage.toString();
+                uploadData(imageURL);
+                dialog.dismiss();
+            }).addOnFailureListener(e -> {
+                Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            });
+        }
 
     }
+
+
     public void uploadData(String imageURL) {
         String tag = tagBtn.getText().toString();
         if(tag.equals("+ add a tag"))
