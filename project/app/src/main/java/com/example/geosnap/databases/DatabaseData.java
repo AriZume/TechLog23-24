@@ -18,6 +18,8 @@ public class DatabaseData {
         this.desc = desc;
     }
 
+    public DatabaseData(){};
+
     public String getTag() {
         return tag;
     }
