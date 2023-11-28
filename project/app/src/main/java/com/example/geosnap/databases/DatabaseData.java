@@ -3,8 +3,8 @@ package com.example.geosnap.databases;
 public class DatabaseData {
 
     private double latitude, longitude, imgSize;
-    String imgHeight,  imgWidth, imageURL;
-    String dateTime;
+    String imgHeight, imgWidth, imageURL;
+    String dateTime, tag, desc;
 
     public DatabaseData() {
     }
@@ -17,6 +17,18 @@ public class DatabaseData {
         this.imgWidth = imgWidth;
         this.imageURL = imageURL;
         this.dateTime = dateTime;
+    }
+
+    public DatabaseData(double latitude, double longitude, double imgSize, String imgHeight, String imgWidth, String imageURL, String dateTime, String tag, String desc) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.imgSize = imgSize;
+        this.imgHeight = imgHeight;
+        this.imgWidth = imgWidth;
+        this.imageURL = imageURL;
+        this.dateTime = dateTime;
+        this.tag = tag;
+        this.desc = desc;
     }
 
 
