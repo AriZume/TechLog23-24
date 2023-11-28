@@ -6,4 +6,10 @@
         <item name="colorPrimaryVariant">#0F9D58</item>
         <item name="colorOnPrimary">#000</item>
     </style>
+
+    <style name="TestStyle" parent="Theme.AppCompat.DayNight">
+        <item name="colorPrimary">@color/LavenderBlush</item>
+        <item name="colorPrimaryVariant">@color/LavenderBlush</item>
+        <item name="colorOnPrimary">@color/LavenderBlush</item>
+    </style>
 </resources>
