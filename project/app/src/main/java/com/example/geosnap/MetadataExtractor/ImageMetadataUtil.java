@@ -121,7 +121,7 @@ public class ImageMetadataUtil {
     }
 
     public boolean metadataValidator(){
-        return getLatitude() == 0 || getLongitude() == 0 || getDateTime().equals("0");
+        return latitude == 0 || longitude == 0 || getDateTime().equals("0");
     }
 }
 
