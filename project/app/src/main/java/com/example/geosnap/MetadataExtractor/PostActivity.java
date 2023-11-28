@@ -233,15 +233,11 @@ public class PostActivity extends AppCompatActivity {
                     int selectedId = bottomSheetRadioGroup.getCheckedRadioButtonId();
                     RadioButton radioButton = bottomSheetDialog.findViewById(selectedId);
 
-                    // Get the background drawable of the selected radio button
-                    Drawable backgroundDrawable = radioButton.getBackground();
-
                     String selectedTag = radioButton.getText().toString();
                     Toast.makeText(PostActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
 
                     if (tagBtn != null) {
                         // Set the background drawable for addTagBtn
-                        tagBtn.setBackground(backgroundDrawable);
                         tagBtn.setText(selectedTag);
                     }
 
