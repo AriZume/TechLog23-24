@@ -37,7 +37,10 @@ import android.widget.Toast;
 import com.example.geosnap.MainActivity;
 import com.example.geosnap.R;
 import com.example.geosnap.databases.DatabaseData;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -55,6 +58,7 @@ public class PostActivity extends AppCompatActivity {
     private ArrayList<Uri> imagesUri;
     private ViewPager uploadImg;
     ImageMetadataUtil imageMetadataUtil;
+    private int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +83,6 @@ public class PostActivity extends AppCompatActivity {
                                     imagesUri.add(uri);
                                     imageMetadataUtil.extractMetadata(PostActivity.this, uri, getContentResolver());
                                 }
-                            } else if (data.hasExtra("data")) {
-                                // Capture picture from camera
-                                imageBitmap = (Bitmap) data.getExtras().get("data");
-                                imageUri = imageMetadataUtil.getImageUri(PostActivity.this, imageBitmap);
-                                imagesUri.add(imageUri);
-                                imageMetadataUtil.extractMetadata(PostActivity.this, imageUri, getContentResolver());
                             } else if (data.getData() != null) {
                                 // Handle the case where a single image is selected from the gallery
                                 imagesUri.add(data.getData());
@@ -99,35 +97,17 @@ public class PostActivity extends AppCompatActivity {
                 }
         );
 
-
-        /*uploadImg.setOnClickListener(view -> {
-            // Create an intent to show the dialog to pick an image
-            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-            photoPickerIntent.setType("image/*");
-            // Create an Intent to capture a photo from the camera
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            // Create a chooser dialog for the user to pick between gallery and camera
-            Intent chooserIntent = Intent.createChooser(photoPickerIntent, "Select Image");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
-            // Launch the chooser dialog
-            activityResultLauncher.launch(chooserIntent);
-            checkForCamPermission();
-        });
-        */
-
         etDescription = findViewById(R.id.etDescription);
         cancelBtn = findViewById(R.id.cancelButton);
         uploadBtn = findViewById(R.id.uploadButton);
         tagBtn = findViewById(R.id.addTagBtn);
 
         btnSelectImages.setOnClickListener(view -> {
-                checkUserPermission();
+                //checkUserPermission();
                 // Create an intent to show the dialog to pick an image
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                // Create an Intent to capture a photo from the camera
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                 //gia polles fwtografies apo thn kamera:
                 //Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
@@ -135,10 +115,8 @@ public class PostActivity extends AppCompatActivity {
 
                 // Create a chooser dialog for the user to pick between gallery and camera
                 Intent chooserIntent = Intent.createChooser(photoPickerIntent, "Select Images");
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
                 // Launch the chooser dialog
                 activityResultLauncher.launch(chooserIntent);
-                checkForCamPermission();
         });
 
         tagBtn.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +139,8 @@ public class PostActivity extends AppCompatActivity {
 
     public void saveData() {
         for (int i=0; i<imagesUri.size(); i++) {
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images")
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                    .child("images")
                     .child(imagesUri.get(i).getLastPathSegment());
 
             AlertDialog.Builder builder = new AlertDialog.Builder(PostActivity.this);
@@ -172,7 +151,8 @@ public class PostActivity extends AppCompatActivity {
 
             storageReference.putFile(imagesUri.get(i)).addOnSuccessListener(taskSnapshot -> {
                 Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                while (!uriTask.isComplete()) ;
+                taskSnapshot.getMetadata();
+                while (!uriTask.isComplete());
                 Uri urlImage = uriTask.getResult();
                 String imageURL = urlImage.toString();
                 uploadData(imageURL);
@@ -192,21 +172,35 @@ public class PostActivity extends AppCompatActivity {
             tag = "no tag";
         String description = etDescription.getText().toString();
 
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("info")
+                .child(imageMetadataUtil.getDateTime());
+
+        dbRef.child("tag").setValue(tag);
+        dbRef.child("description").setValue(description);
+
         DatabaseData dataClass = new DatabaseData(imageMetadataUtil.getLatitude(),
                 imageMetadataUtil.getLongitude(),
                 imageMetadataUtil.getImgSize(),
                 imageMetadataUtil.getImgHeight(),
                 imageMetadataUtil.getImgWidth(),
-                imageURL, imageMetadataUtil.getDateTime(), tag, description);
+                imageURL, imageMetadataUtil.getDateTime());
 
-        FirebaseDatabase.getInstance().getReference("info").child(imageMetadataUtil.getDateTime())
-                .setValue(dataClass).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(PostActivity.this, "Saved", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(PostActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                }).addOnFailureListener(e -> Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show());
+        dbRef.push().setValue(dataClass).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                count+=1;
+                if (count==imagesUri.size()){
+                    Toast.makeText(PostActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(PostActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void saveOnClick(View view){
@@ -219,32 +213,17 @@ public class PostActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_CAMERA_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
-            }
-        }
 
-        /*if (requestCode == REQUEST_PERMISSION_CODE) {
+        if (requestCode == REQUEST_PERMISSION_CODE) {
             if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
             }
         }
-         */
-    }
 
-    public boolean checkForCamPermission(){
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-             requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
-             return true;
-        }
-        return false;
     }
-
+/*
     private void checkUserPermission(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 !=PackageManager.PERMISSION_GRANTED){
@@ -253,6 +232,8 @@ public class PostActivity extends AppCompatActivity {
                     REQUEST_PERMISSION_CODE);
         }
     }
+
+ */
 
     private void openBottomSheet() {
         // Find the dimming view in the activity_post layout

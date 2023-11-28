@@ -4,12 +4,12 @@ public class DatabaseData {
 
     private double latitude, longitude, imgSize;
     String imgHeight,  imgWidth, imageURL;
-    String dateTime, tag, desc;
+    String dateTime;
 
     public DatabaseData() {
     }
 
-    public DatabaseData(double latitude, double longitude, double imgSize, String imgHeight, String imgWidth, String imageURL, String dateTime, String tag, String desc) {
+    public DatabaseData(double latitude, double longitude, double imgSize, String imgHeight, String imgWidth, String imageURL, String dateTime) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.imgSize = imgSize;
@@ -17,25 +17,8 @@ public class DatabaseData {
         this.imgWidth = imgWidth;
         this.imageURL = imageURL;
         this.dateTime = dateTime;
-        this.tag = tag;
-        this.desc = desc;
     }
 
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
 
     public double getLatitude() {
         return latitude;
