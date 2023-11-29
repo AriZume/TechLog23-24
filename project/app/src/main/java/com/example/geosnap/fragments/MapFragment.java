@@ -14,7 +14,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.geosnap.R;
-import com.example.geosnap.databases.DatabaseData;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -165,21 +164,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     }
 
     private void retrieveData(OnLocationsLoadedListener listener) {
-        // Get a reference to our posts
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("info");
 
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                DatabaseData newInfo = dataSnapshot.getValue(DatabaseData.class);
-                Log.d("lat", "onChildAdded: " + newInfo.getLatitude());
-                Log.d("lng", "onChildAdded: " + newInfo.getLongitude());
-                locations.add(new LatLng(newInfo.getLatitude(),newInfo.getLongitude()));
-                Log.d("locations1", "onChildAdded: " + locations.toString());
-                Log.d("key", "onChildAdded: " + prevChildKey);
+                for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
 
-                if(listener != null){
+                    Double latitude = uniqueIdSnapshot.child("latitude").getValue(Double.class);
+                    Double longitude = uniqueIdSnapshot.child("longitude").getValue(Double.class);
+
+                    if (latitude != null && longitude != null) {
+                        Log.d("lat", "onChildAdded: " + latitude);
+                        Log.d("lng", "onChildAdded: " + longitude);
+
+                        locations.add(new LatLng(latitude, longitude));
+                        Log.d("locations1", "onChildAdded: " + locations);
+                        Log.d("key", "onChildAdded: " + prevChildKey);
+                    }
+                }
+
+                if (listener != null) {
                     listener.onLocationsLoaded(locations);
                 }
             }

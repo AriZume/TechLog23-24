@@ -3,8 +3,8 @@ package com.example.geosnap.databases;
 public class DatabaseData {
 
     private double latitude, longitude, imgSize;
-    String imgHeight,  imgWidth, imageURL;
-    String dateTime, tag, desc;
+    private String imgHeight,  imgWidth, imageURL;
+    private String dateTime, tag, desc;
 
     public DatabaseData(double latitude, double longitude, double imgSize, String imgHeight, String imgWidth, String imageURL, String dateTime, String tag, String desc) {
         this.latitude = latitude;
