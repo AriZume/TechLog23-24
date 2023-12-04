@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/colorPrimaryDark"
-    tools:context=".MetadataExtractor.PostActivity">
+    tools:context=".Metadata.PostActivity">
 
     <View
         android:id="@+id/dimmingView"
@@ -110,6 +110,6 @@
             app:cornerRadius="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="saveOnClick"/>
+            android:onClick="uploadOnClick"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

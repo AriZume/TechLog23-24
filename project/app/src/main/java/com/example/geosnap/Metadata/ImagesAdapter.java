@@ -1,4 +1,4 @@
-package com.example.geosnap.MetadataExtractor;
+package com.example.geosnap.Metadata;
 
 import android.net.Uri;
 import android.view.LayoutInflater;

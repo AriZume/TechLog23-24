@@ -39,7 +39,7 @@
             android:name=".databases.UploadActivity"
             android:exported="false" />
         <activity
-            android:name=".MetadataExtractor.PostActivity"
+            android:name=".Metadata.PostActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity

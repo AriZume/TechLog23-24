@@ -1,4 +1,4 @@
-package com.example.geosnap.MetadataExtractor;
+package com.example.geosnap.Metadata;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,14 +33,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+import java.time.LocalDateTime;
 
 public class PostActivity extends AppCompatActivity {
     EditText etDescription;
     Button cancelBtn, uploadBtn, tagBtn, btnSelectImages;
     private ArrayList<Uri> imagesUri;
     private ViewPager uploadImg;
-    ImageMetadataUtil imageMetadataUtil;
+    private ArrayList<ImageMetadataUtil> imageMetadataUtils;
     private int count = 0;
 
     @Override
@@ -48,49 +55,40 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
         uploadImg = findViewById(R.id.uploadImage);
         btnSelectImages = findViewById(R.id.btnSelectImages);
+        etDescription = findViewById(R.id.etDescription);
+        tagBtn = findViewById(R.id.addTagBtn);
+        cancelBtn = findViewById(R.id.cancelButton);
+        uploadBtn = findViewById(R.id.uploadButton);
         imagesUri= new ArrayList<>();
-        imageMetadataUtil= new ImageMetadataUtil();
+        imageMetadataUtils = new ArrayList<>();
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         if (data != null) {
-                            if (data.getClipData() != null) {
+                            if(data.getClipData() != null) {
                                 // Get image from gallery
                                 int count = data.getClipData().getItemCount();
 
                                 for (int i = 0; i < count; i++) {
                                     Uri uri = data.getClipData().getItemAt(i).getUri();
-                                    imageMetadataUtil.extractMetadata(PostActivity.this, uri, getContentResolver());
-                                    if (imageMetadataUtil.metadataValidator() ){
+                                    imageMetadataUtils.add( new ImageMetadataUtil());
+                                    if(imageMetadataUtils.get(i).extractMetadata(PostActivity.this, uri, getContentResolver())){
                                         //MetaData Validation
-                                        Toast.makeText(PostActivity.this, "Please enable 'location tags' on the camera settings", Toast.LENGTH_LONG).show();
-                                    }else {
                                         imagesUri.add(uri);
+                                    }else {
+                                        Toast.makeText(PostActivity.this, "Please enable 'location tags' on the camera settings", Toast.LENGTH_LONG).show();
                                     }
-                                }
-                            } else if (data.getData() != null) {
-                                // Handle the case where a single image is selected from the gallery
-                                imageMetadataUtil.extractMetadata(PostActivity.this, data.getData(), getContentResolver());
-                                if (imageMetadataUtil.metadataValidator() ){
-                                    //MetaData Validation
-                                    Toast.makeText(PostActivity.this, "Please enable 'location tags' on the camera settings", Toast.LENGTH_LONG).show();
-                                }
-                                else{
-                                    imagesUri.add(data.getData());
                                 }
                             }
                             mySetAdapter();
-                        } else {
+                        }else {
                             Toast.makeText(PostActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
         );
-        etDescription = findViewById(R.id.etDescription);
-        cancelBtn = findViewById(R.id.cancelButton);
-        uploadBtn = findViewById(R.id.uploadButton);
 
         btnSelectImages.setOnClickListener(view -> {
                 //checkUserPermission();
@@ -104,9 +102,7 @@ public class PostActivity extends AppCompatActivity {
                 // Launch the chooser dialog
                 activityResultLauncher.launch(chooserIntent);
         });
-
-
-
+        
         tagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,11 +122,10 @@ public class PostActivity extends AppCompatActivity {
     }
 
     public void saveData() {
-        for (int i=0; i<imagesUri.size(); i++) {
-            if (imageMetadataUtil.metadataValidator()) {
-                //MetaData Validation
-                Toast.makeText(PostActivity.this, "You need to select and image first", Toast.LENGTH_SHORT).show();
-            } else {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        for (int i=0; i < imagesUri.size(); i++){
+            if(imageMetadataUtils.get(i).extractMetadata(PostActivity.this, imagesUri.get(i), getContentResolver())){
                 StorageReference storageReference = FirebaseStorage.getInstance().getReference()
                         .child("images").child(imagesUri.get(i).getLastPathSegment());
 
@@ -140,30 +135,36 @@ public class PostActivity extends AppCompatActivity {
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
+                int finalI = i;
                 storageReference.putFile(imagesUri.get(i)).addOnSuccessListener(taskSnapshot -> {
                     Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                    taskSnapshot.getMetadata();
                     while (!uriTask.isComplete()) ;
                     Uri urlImage = uriTask.getResult();
                     String imageURL = urlImage.toString();
-                    uploadData(imageURL);
+                    Log.d("imageURL", "saveData: " + imageURL);
+                    uploadData(imageURL, imageMetadataUtils.get(finalI), localDateTime.format(formatter));
                     dialog.dismiss();
                 }).addOnFailureListener(e -> {
-                    Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 });
+
+            }else {
+                //MetaData Validation
+                Toast.makeText(PostActivity.this, "You need to select and image first", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    public void uploadData(String imageURL) {
+    public void uploadData(String imageURL, ImageMetadataUtil imageMetadataUtil, String localDateTime) {
         String tag = tagBtn.getText().toString();
-        if(tag.equals("+ add a tag"))
+        if(tag.equals("+ add a tag")) {
             tag = "none";
+        }
         String description = etDescription.getText().toString();
 
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("info")
-                .child(imageMetadataUtil.getDateTime());
+                .child(localDateTime);
 
         dbRef.child("tag").setValue(tag);
         dbRef.child("description").setValue(description);
@@ -193,7 +194,7 @@ public class PostActivity extends AppCompatActivity {
         });
     }
 
-    public void saveOnClick(View view){
+    public void uploadOnClick(View view){
         saveData();
     }
 

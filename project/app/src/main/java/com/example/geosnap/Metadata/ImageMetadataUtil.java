@@ -1,4 +1,4 @@
-package com.example.geosnap.MetadataExtractor;
+package com.example.geosnap.Metadata;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -57,16 +57,16 @@ public class ImageMetadataUtil {
     }
 
 
-    public void extractMetadata(Context context, Uri photoUri,ContentResolver activityContentResolver) {
+    public boolean extractMetadata(Context context, Uri photoUri,ContentResolver activityContentResolver) {
         try {
             ContentResolver contentResolver = context.getContentResolver();
             InputStream inputStream = contentResolver.openInputStream(photoUri);
 
             if (inputStream != null) {
                 Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
-                if (!containsMetadata(metadata)) {
-                    throw new RuntimeException("Selected photo does not contain metadata. Please choose another photo.");
-                }
+//                if (!containsMetadata(metadata)) {
+//                    throw new RuntimeException("Selected photo does not contain metadata. Please choose another photo.");
+//                }
                 File file = new File(getRealPathFromURI(photoUri,activityContentResolver));
                 imgSize = file.length();
                 Log.d("PhotoMetadata", "File Size: " + imgSize + " bytes");
@@ -96,15 +96,16 @@ public class ImageMetadataUtil {
         } catch (ImageProcessingException e) {
             throw new RuntimeException(e);
         }
+        return containsMetadata();
     }
 
-    private boolean containsMetadata(Metadata metadata) {
-        if (metadata == null) {
-            return false;
-        }
-        Iterable<Directory> directories = metadata.getDirectories();
-        return directories != null && directories.iterator().hasNext();
-    }
+//    private boolean containsMetadata(Metadata metadata) {
+//        if (metadata == null) {
+//            return false;
+//        }
+//        Iterable<Directory> directories = metadata.getDirectories();
+//        return directories != null && directories.iterator().hasNext();
+//    }
 
     private String getRealPathFromURI(Uri contentURI,ContentResolver contentResolver) {
         String result;
@@ -120,8 +121,8 @@ public class ImageMetadataUtil {
         return result;
     }
 
-    public boolean metadataValidator(){
-        return getLatitude() == 0 || getLongitude() == 0 || getDateTime().equals("0");
+    public boolean containsMetadata(){
+        return !(getLatitude() == 0 || getLongitude() == 0 || getDateTime().equals("0"));
     }
 }
 
