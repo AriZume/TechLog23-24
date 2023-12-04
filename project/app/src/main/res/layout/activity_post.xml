@@ -23,7 +23,8 @@
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:theme="@style/TestStyle"/>
 
     <Button
         android:id="@+id/btnSelectImages"
@@ -49,7 +50,7 @@
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
         android:background="@drawable/green_tag_btn_border"
-        android:text="+ add a tag"
+        android:text=" add a tag +"
         android:textSize="12sp"
         android:textColor="@color/green"
         app:layout_constraintStart_toStartOf="parent"

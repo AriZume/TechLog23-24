@@ -3,37 +3,25 @@ package com.example.geosnap.MetadataExtractor;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.compose.foundation.gestures.TapGestureDetectorKt;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
-
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 import com.example.geosnap.MainActivity;
 import com.example.geosnap.R;
 import com.example.geosnap.databases.DatabaseData;
@@ -44,17 +32,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 
 public class PostActivity extends AppCompatActivity {
-
-    Uri imageUri;
     EditText etDescription;
     Button cancelBtn, uploadBtn, tagBtn, btnSelectImages;
-    Bitmap imageBitmap;
-    private static final int MY_CAMERA_REQUEST_CODE = 100;
-    private final int REQUEST_PERMISSION_CODE=35;
     private ArrayList<Uri> imagesUri;
     private ViewPager uploadImg;
     ImageMetadataUtil imageMetadataUtil;
@@ -80,15 +62,25 @@ public class PostActivity extends AppCompatActivity {
 
                                 for (int i = 0; i < count; i++) {
                                     Uri uri = data.getClipData().getItemAt(i).getUri();
-                                    imagesUri.add(uri);
                                     imageMetadataUtil.extractMetadata(PostActivity.this, uri, getContentResolver());
+                                    if (imageMetadataUtil.metadataValidator() ){
+                                        //MetaData Validation
+                                        Toast.makeText(PostActivity.this, "Please enable 'location tags' on the camera settings", Toast.LENGTH_LONG).show();
+                                    }else {
+                                        imagesUri.add(uri);
+                                    }
                                 }
                             } else if (data.getData() != null) {
                                 // Handle the case where a single image is selected from the gallery
-                                imagesUri.add(data.getData());
                                 imageMetadataUtil.extractMetadata(PostActivity.this, data.getData(), getContentResolver());
+                                if (imageMetadataUtil.metadataValidator() ){
+                                    //MetaData Validation
+                                    Toast.makeText(PostActivity.this, "Please enable 'location tags' on the camera settings", Toast.LENGTH_LONG).show();
+                                }
+                                else{
+                                    imagesUri.add(data.getData());
+                                }
                             }
-
                             mySetAdapter();
                         } else {
                             Toast.makeText(PostActivity.this, "No Image Selected", Toast.LENGTH_SHORT).show();
@@ -96,11 +88,9 @@ public class PostActivity extends AppCompatActivity {
                     }
                 }
         );
-
         etDescription = findViewById(R.id.etDescription);
         cancelBtn = findViewById(R.id.cancelButton);
         uploadBtn = findViewById(R.id.uploadButton);
-        tagBtn = findViewById(R.id.addTagBtn);
 
         btnSelectImages.setOnClickListener(view -> {
                 //checkUserPermission();
@@ -109,15 +99,13 @@ public class PostActivity extends AppCompatActivity {
                 photoPickerIntent.setType("image/*");
                 photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 
-                //gia polles fwtografies apo thn kamera:
-                //Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
-                //alla prepei na oristei to limit mesa sto activity result
-
                 // Create a chooser dialog for the user to pick between gallery and camera
                 Intent chooserIntent = Intent.createChooser(photoPickerIntent, "Select Images");
                 // Launch the chooser dialog
                 activityResultLauncher.launch(chooserIntent);
         });
+
+
 
         tagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,37 +127,39 @@ public class PostActivity extends AppCompatActivity {
 
     public void saveData() {
         for (int i=0; i<imagesUri.size(); i++) {
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference()
-                    .child("images")
-                    .child(imagesUri.get(i).getLastPathSegment());
+            if (imageMetadataUtil.metadataValidator()) {
+                //MetaData Validation
+                Toast.makeText(PostActivity.this, "You need to select and image first", Toast.LENGTH_SHORT).show();
+            } else {
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+                        .child("images").child(imagesUri.get(i).getLastPathSegment());
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(PostActivity.this);
-            builder.setCancelable(false);
-            builder.setView(R.layout.progress_layout);
-            AlertDialog dialog = builder.create();
-            dialog.show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(PostActivity.this);
+                builder.setCancelable(false);
+                builder.setView(R.layout.progress_layout);
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
-            storageReference.putFile(imagesUri.get(i)).addOnSuccessListener(taskSnapshot -> {
-                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                taskSnapshot.getMetadata();
-                while (!uriTask.isComplete());
-                Uri urlImage = uriTask.getResult();
-                String imageURL = urlImage.toString();
-                uploadData(imageURL);
-                dialog.dismiss();
-            }).addOnFailureListener(e -> {
-                Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            });
+                storageReference.putFile(imagesUri.get(i)).addOnSuccessListener(taskSnapshot -> {
+                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                    taskSnapshot.getMetadata();
+                    while (!uriTask.isComplete()) ;
+                    Uri urlImage = uriTask.getResult();
+                    String imageURL = urlImage.toString();
+                    uploadData(imageURL);
+                    dialog.dismiss();
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(PostActivity.this, e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                });
+            }
         }
-
     }
-
 
     public void uploadData(String imageURL) {
         String tag = tagBtn.getText().toString();
         if(tag.equals("+ add a tag"))
-            tag = "no tag";
+            tag = "none";
         String description = etDescription.getText().toString();
 
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("info")
@@ -210,30 +200,6 @@ public class PostActivity extends AppCompatActivity {
     public void cancelOnClick(View view){
         finish();
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission granted", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
-            }
-        }
-
-    }
-/*
-    private void checkUserPermission(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                !=PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_PERMISSION_CODE);
-        }
-    }
-
- */
 
     private void openBottomSheet() {
         // Find the dimming view in the activity_post layout
@@ -287,9 +253,14 @@ public class PostActivity extends AppCompatActivity {
                     int selectedId = bottomSheetRadioGroup.getCheckedRadioButtonId();
                     RadioButton radioButton = bottomSheetDialog.findViewById(selectedId);
 
-                    if (radioButton != null) {
-                        Toast.makeText(PostActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
+                    String selectedTag = radioButton.getText().toString();
+                    Toast.makeText(PostActivity.this, radioButton.getText(), Toast.LENGTH_SHORT).show();
+
+                    if (tagBtn != null) {
+                        // Set the background drawable for addTagBtn
+                        tagBtn.setText(selectedTag);
                     }
+
                     bottomSheetDialog.dismiss();  // Dismiss the Bottom Sheet Dialog
 
                     // Set the dimming view back to gone
