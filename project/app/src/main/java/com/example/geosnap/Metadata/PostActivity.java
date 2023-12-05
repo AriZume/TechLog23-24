@@ -195,7 +195,7 @@ public class PostActivity extends AppCompatActivity {
 
     public void uploadData(String imageURL, ImageMetadataUtil imageMetadataUtil, String localDateTime) {
         String tag = tagBtn.getText().toString();
-        if(tag.equals("+ add a tag")) {
+        if(tag.equals("add a tag +")) {
             tag = "none";
         }
         String description = etDescription.getText().toString();
