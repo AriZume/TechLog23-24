@@ -4,15 +4,20 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
+
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -34,12 +39,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import java.time.LocalDateTime;
+
 
 public class PostActivity extends AppCompatActivity {
     EditText etDescription;
@@ -48,6 +52,8 @@ public class PostActivity extends AppCompatActivity {
     private ViewPager uploadImg;
     private ArrayList<ImageMetadataUtil> imageMetadataUtils;
     private int count = 0;
+    private static final int STORAGE_PERMISSION_CODE = 1;
+    ActivityResultLauncher<Intent> imageResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +67,22 @@ public class PostActivity extends AppCompatActivity {
         uploadBtn = findViewById(R.id.uploadButton);
         imagesUri= new ArrayList<>();
         imageMetadataUtils = new ArrayList<>();
+        //Calling Intent
+        registerImageResultLauncher();
 
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+        btnSelectImages.setOnClickListener(view -> {
+            checkStoragePermissionAndGetImage();
+        });
+        
+        tagBtn.setOnClickListener(view -> openBottomSheet());
+
+        getSupportActionBar().setTitle("Upload...");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF252526")));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void registerImageResultLauncher(){
+        imageResultLauncher= registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
@@ -89,34 +109,51 @@ public class PostActivity extends AppCompatActivity {
                     }
                 }
         );
-
-        btnSelectImages.setOnClickListener(view -> {
-                //checkUserPermission();
-                // Create an intent to show the dialog to pick an image
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-                // Create a chooser dialog for the user to pick between gallery and camera
-                Intent chooserIntent = Intent.createChooser(photoPickerIntent, "Select Images");
-                // Launch the chooser dialog
-                activityResultLauncher.launch(chooserIntent);
-        });
-        
-        tagBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openBottomSheet();
-            }
-        });
-
-        getSupportActionBar().setTitle("Upload...");
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF252526")));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    private void pickImageFromGallery(){
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        // Create a chooser dialog for the user to pick between gallery and camera
+        Intent chooserIntent = Intent.createChooser(photoPickerIntent, "Select Images");
+        // Launch the chooser dialog
+        imageResultLauncher.launch(chooserIntent);
+    }
+
+    private void checkStoragePermissionAndGetImage(){
+        if(ActivityCompat.checkSelfPermission(PostActivity.this,
+                Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(PostActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ){
+            if ( Build.VERSION.SDK_INT <= 32) {
+                ActivityCompat.requestPermissions(PostActivity.this,new String[]
+                        {Manifest.permission.READ_EXTERNAL_STORAGE},STORAGE_PERMISSION_CODE);
+            }
+            else {
+                ActivityCompat.requestPermissions(PostActivity.this, new String[]
+                        {Manifest.permission.READ_MEDIA_IMAGES}, STORAGE_PERMISSION_CODE);
+            }
+        }
+        else {
+            pickImageFromGallery();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                pickImageFromGallery();
+            }else{
+                Toast.makeText(this,"Storage Permission is denied please allow permission to get image", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
     private void mySetAdapter(){
-        //edw mpainoyn oi fwto (imagesUri) sto viewpager
+        //Inserting photo on viewpager(imagesUri)
         ImagesAdapter imagesAdapter= new ImagesAdapter(this, imagesUri);
         uploadImg.setAdapter(imagesAdapter);
     }
