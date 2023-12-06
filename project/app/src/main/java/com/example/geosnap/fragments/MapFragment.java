@@ -42,7 +42,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private boolean isInitialLocationUpdate = true;
 
-    private ArrayList<LatLng> locations = new ArrayList<>();
+    //private ArrayList<LatLng> locations = new ArrayList<>();
+
+    private String datetime="pussy";
+    private LatLng loc = new LatLng(0,0);
+    private String tag="bitch";
 
 
     @Nullable
@@ -70,8 +74,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         updateLocationUI();
         startLocationUpdates();
 
-        setLocationsOnMap();
+
         retrieveData(this);
+        setLocationsOnMap();
     }
 
     private void createLocationCallback() {
@@ -150,19 +155,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     }
 
     @Override
-    public void onLocationsLoaded(ArrayList<LatLng> locations) {
+    public void onLocationsLoaded(String datetime, LatLng location, String tag) {  //String URL gia tin photo
         // Call the method to set locations on the map
         setLocationsOnMap();
     }
 
     private void setLocationsOnMap() {
         //Log.d("locations", "onChildAdded: " + locations.toString());
-        for (LatLng location : locations) {
-            googleMap.addMarker(new MarkerOptions().position(location).title("TEST"));
+        //for (LatLng location : locations) {
+            googleMap.addMarker(new MarkerOptions().position(loc).title(datetime).snippet(tag));
 
-        }
+        //}
     }
 
+
+
+// only for map display
     private void retrieveData(OnLocationsLoadedListener listener) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("info");
@@ -170,26 +178,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                String dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
+                tag = dataSnapshot.child("tag").toString();
+                //LatLng loc;
                 for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
-                    String imageID = uniqueIdSnapshot.getKey();
+                    String imageID = uniqueIdSnapshot.getKey(); //Gets the inner child key (UniqueImageID)
                     Double latitude = uniqueIdSnapshot.child("latitude").getValue(Double.class);
                     Double longitude = uniqueIdSnapshot.child("longitude").getValue(Double.class);
+
 
                     if (latitude != null && longitude != null) {
                         Log.d("imageID", "onChildAdded: " + imageID);
                         Log.d("lat", "onChildAdded: " + latitude);
                         Log.d("lng", "onChildAdded: " + longitude);
 
-                        locations.add(new LatLng(latitude, longitude));
-                        Log.d("locations1", "onChildAdded: " + locations);
-                        if(prevChildKey != null) {
-                            Log.d("key", "onChildAdded: " + prevChildKey);
-                        }
+                        //locations.add(new LatLng(latitude, longitude));
+                        //Log.d("locations1", "onChildAdded: " + locations);
+                        loc = new LatLng(latitude, longitude);
                     }
+                    break;
                 }
-
+                Log.d("key", "onChildAdded: " + dateTimeKey);
+                datetime = dateTimeKey;
+                Log.d("dt", "onChildAdded: " + datetime);
                 if (listener != null) {
-                    listener.onLocationsLoaded(locations);
+                    listener.onLocationsLoaded(datetime, loc, tag);
                 }
             }
 
