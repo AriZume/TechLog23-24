@@ -3,6 +3,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,19 +41,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     private LocationCallback locationCallback;
 
     private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private static final int REFRESH_INTERVAL = 10000; // (10000 for 10 seconds)
+    private Handler handler = new Handler();
+    private Runnable refreshRunnable;
     private boolean isInitialLocationUpdate = true;
-
-    //private ArrayList<LatLng> locations = new ArrayList<>();
-
-    private String datetime="pussy";
-    private LatLng loc = new LatLng(0,0);
-    private String tag="bitch";
-
+    private String dateTimeKey, tag;
+    private LatLng loc;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //retrieveData();
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
@@ -134,9 +132,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        startAutoRefresh();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         stopLocationUpdates();
+        stopAutoRefresh();
+    }
+
+    private void startAutoRefresh() {
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Refresh the map by retrieving data from Firebase
+                retrieveData(MapFragment.this);
+                // Schedule the next refresh
+                handler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        };
+
+        // Start the initial refresh
+        handler.post(refreshRunnable);
+    }
+
+    private void stopAutoRefresh() {
+        // Remove the refresh callback
+        handler.removeCallbacks(refreshRunnable);
     }
 
     private void stopLocationUpdates() {
@@ -161,16 +186,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     }
 
     private void setLocationsOnMap() {
-        //Log.d("locations", "onChildAdded: " + locations.toString());
-        //for (LatLng location : locations) {
-            googleMap.addMarker(new MarkerOptions().position(loc).title(datetime).snippet(tag));
-
-        //}
+        if(loc != null){
+            googleMap.addMarker(new MarkerOptions().position(loc).title(dateTimeKey).snippet(tag));
+        }
+        loc=null;
+        tag="";
+        dateTimeKey="";
     }
 
 
 
-// only for map display
+    // Display of an upload on the map
     private void retrieveData(OnLocationsLoadedListener listener) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("info");
@@ -179,8 +205,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                 String dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
-                tag = dataSnapshot.child("tag").toString();
-                //LatLng loc;
+                tag = dataSnapshot.child("tag").getValue().toString();
+
                 for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
                     String imageID = uniqueIdSnapshot.getKey(); //Gets the inner child key (UniqueImageID)
                     Double latitude = uniqueIdSnapshot.child("latitude").getValue(Double.class);
@@ -192,17 +218,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
                         Log.d("lat", "onChildAdded: " + latitude);
                         Log.d("lng", "onChildAdded: " + longitude);
 
-                        //locations.add(new LatLng(latitude, longitude));
-                        //Log.d("locations1", "onChildAdded: " + locations);
                         loc = new LatLng(latitude, longitude);
                     }
                     break;
                 }
                 Log.d("key", "onChildAdded: " + dateTimeKey);
-                datetime = dateTimeKey;
-                Log.d("dt", "onChildAdded: " + datetime);
                 if (listener != null) {
-                    listener.onLocationsLoaded(datetime, loc, tag);
+                    listener.onLocationsLoaded(MapFragment.this.dateTimeKey, loc, tag);
                 }
             }
 
