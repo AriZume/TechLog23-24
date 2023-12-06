@@ -72,7 +72,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         updateLocationUI();
         startLocationUpdates();
 
-
         retrieveData(this);
         setLocationsOnMap();
     }
@@ -194,8 +193,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         dateTimeKey="";
     }
 
-
-
     // Display of an upload on the map
     private void retrieveData(OnLocationsLoadedListener listener) {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -204,14 +201,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                String dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
+                dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
                 tag = dataSnapshot.child("tag").getValue().toString();
 
                 for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
                     String imageID = uniqueIdSnapshot.getKey(); //Gets the inner child key (UniqueImageID)
                     Double latitude = uniqueIdSnapshot.child("latitude").getValue(Double.class);
                     Double longitude = uniqueIdSnapshot.child("longitude").getValue(Double.class);
-
 
                     if (latitude != null && longitude != null) {
                         Log.d("imageID", "onChildAdded: " + imageID);
@@ -222,6 +218,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
                     }
                     break;
                 }
+
                 Log.d("key", "onChildAdded: " + dateTimeKey);
                 if (listener != null) {
                     listener.onLocationsLoaded(MapFragment.this.dateTimeKey, loc, tag);
