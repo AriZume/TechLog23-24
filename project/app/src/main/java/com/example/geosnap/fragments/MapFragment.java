@@ -1,7 +1,10 @@
 package com.example.geosnap.fragments;
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -24,6 +27,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
@@ -31,10 +36,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import android.graphics.Bitmap;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocationsLoadedListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocationsLoadedListener { //, ImageConversionListener {
 
     private GoogleMap googleMap;
     private FusedLocationProviderClient fusedLocationClient;
@@ -47,6 +58,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     private boolean isInitialLocationUpdate = true;
     private String dateTimeKey, tag;
     private LatLng loc;
+    private Bitmap image;
 
     @Nullable
     @Override
@@ -179,18 +191,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     }
 
     @Override
-    public void onLocationsLoaded(String datetime, LatLng location, String tag) {  //String URL gia tin photo
+    public void onLocationsLoaded(String datetime, LatLng location, String tag, Bitmap image) {  //String URL gia tin photo
         // Call the method to set locations on the map
         setLocationsOnMap();
     }
 
     private void setLocationsOnMap() {
-        if(loc != null){
-            googleMap.addMarker(new MarkerOptions().position(loc).title(dateTimeKey).snippet(tag));
+        if(loc != null && image != null){
+            googleMap.addMarker(new MarkerOptions().position(loc).title(dateTimeKey).snippet(tag).icon(BitmapDescriptorFactory.fromBitmap(image)));
         }
         loc=null;
         tag="";
         dateTimeKey="";
+        image=null;
     }
 
     // Display of an upload on the map
@@ -208,11 +221,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
                     String imageID = uniqueIdSnapshot.getKey(); //Gets the inner child key (UniqueImageID)
                     Double latitude = uniqueIdSnapshot.child("latitude").getValue(Double.class);
                     Double longitude = uniqueIdSnapshot.child("longitude").getValue(Double.class);
+                    String imageURL = uniqueIdSnapshot.child("imageURL").getValue().toString();
+                    Log.d("imageURL", "onChildAdded: " + imageURL);
+
+
+
+                    new DownloadImageTask(image).execute(imageURL);
+                    //image  = getBitmapFromURL(imageURL);
+                    if (image != null) {
+                        Log.d("notnulllll", "onChildAdded: ");
+
+                    } else{
+                        Log.d("nulllll", "onChildAdded: ");
+                    }
+
+
 
                     if (latitude != null && longitude != null) {
                         Log.d("imageID", "onChildAdded: " + imageID);
                         Log.d("lat", "onChildAdded: " + latitude);
                         Log.d("lng", "onChildAdded: " + longitude);
+
 
                         loc = new LatLng(latitude, longitude);
                     }
@@ -221,7 +250,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
 
                 Log.d("key", "onChildAdded: " + dateTimeKey);
                 if (listener != null) {
-                    listener.onLocationsLoaded(MapFragment.this.dateTimeKey, loc, tag);
+                    listener.onLocationsLoaded(MapFragment.this.dateTimeKey, loc, tag, image);
                 }
             }
 
@@ -242,4 +271,66 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
             }
         });
     }
+
+
+//    public static Bitmap getBitmapFromURL(String src) {
+//        try {
+//
+//            //uncomment below line in image name have spaces.
+//            //src = src.replaceAll(" ", "%20");
+//
+//            URL url = new URL(src);
+//
+//            HttpURLConnection connection = (HttpURLConnection) url
+//                    .openConnection();
+//            connection.setDoInput(true);
+//            connection.connect();
+//            InputStream input = connection.getInputStream();
+//            Log.d("yadelehiha", "onChildAdded: " + input);
+//            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+//            return myBitmap;
+//        } catch (Exception e) {
+//            Log.d("vk21", e.toString());
+//            return null;
+//        }
+//    }
+
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        private ProgressDialog mDialog;
+        private Bitmap bmImage;
+
+        public DownloadImageTask(Bitmap bmImage) {
+            this.bmImage = image;
+        }
+
+        protected void onPreExecute() {
+
+            mDialog = ProgressDialog.show(getContext(), "Please wait...", "Retrieving data ...", true);
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", "image download error");
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            //set image of your imageview
+            bmImage=result;
+            //close
+            mDialog.dismiss();
+        }
+    }
+
+
 }
