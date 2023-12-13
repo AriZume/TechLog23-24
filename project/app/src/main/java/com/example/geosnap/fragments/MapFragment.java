@@ -3,6 +3,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.geosnap.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -226,8 +230,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
 
 
 
-                    new DownloadImageTask(image).execute(imageURL);
-                    //image  = getBitmapFromURL(imageURL);
+
+                    Glide.with(getContext())
+                            .asBitmap()
+                            .load(imageURL)
+                            .into(new CustomTarget<Bitmap>(100,100) {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    image=resource;
+                                }
+
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                }
+                            });
+
+
                     if (image != null) {
                         Log.d("notnulllll", "onChildAdded: ");
 
@@ -271,66 +289,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
             }
         });
     }
-
-
-//    public static Bitmap getBitmapFromURL(String src) {
-//        try {
-//
-//            //uncomment below line in image name have spaces.
-//            //src = src.replaceAll(" ", "%20");
-//
-//            URL url = new URL(src);
-//
-//            HttpURLConnection connection = (HttpURLConnection) url
-//                    .openConnection();
-//            connection.setDoInput(true);
-//            connection.connect();
-//            InputStream input = connection.getInputStream();
-//            Log.d("yadelehiha", "onChildAdded: " + input);
-//            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-//            return myBitmap;
-//        } catch (Exception e) {
-//            Log.d("vk21", e.toString());
-//            return null;
-//        }
-//    }
-
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        private ProgressDialog mDialog;
-        private Bitmap bmImage;
-
-        public DownloadImageTask(Bitmap bmImage) {
-            this.bmImage = image;
-        }
-
-        protected void onPreExecute() {
-
-            mDialog = ProgressDialog.show(getContext(), "Please wait...", "Retrieving data ...", true);
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", "image download error");
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            //set image of your imageview
-            bmImage=result;
-            //close
-            mDialog.dismiss();
-        }
-    }
-
 
 }
