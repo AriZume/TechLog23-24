@@ -11,6 +11,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,16 +22,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import com.example.geosnap.MainActivity;
 import com.example.geosnap.R;
 import com.example.geosnap.databases.DatabaseData;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -38,19 +46,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-
 import java.time.LocalDateTime;
 
 
-public class PostActivity extends AppCompatActivity {
-    EditText etDescription;
-    Button cancelBtn, uploadBtn, tagBtn, btnSelectImages;
+public class PostActivity extends AppCompatActivity implements OnMapReadyCallback{
+    EditText etDescription,dateTime;
+    double latitude,longitude;
+    Button cancelBtn, uploadBtn, tagBtn, btnSelectImages, editBtn;
     private ArrayList<Uri> imagesUri;
-    private ViewPager uploadImg;
+    private int metadataPhotoCount;
+    private ViewPager uploadImg,editPhotos;
+    private Marker selectedMarker;
+    private PopupWindow pw;
+    private GoogleMap mMap;
     private ArrayList<ImageMetadataUtil> imageMetadataUtils;
+    ArrayList<Uri> noMetadataPhotos = new ArrayList<>();
     private int count = 0;
     private static final int STORAGE_PERMISSION_CODE = 1;
     ActivityResultLauncher<Intent> imageResultLauncher;
@@ -65,6 +77,8 @@ public class PostActivity extends AppCompatActivity {
         tagBtn = findViewById(R.id.addTagBtn);
         cancelBtn = findViewById(R.id.cancelButton);
         uploadBtn = findViewById(R.id.uploadButton);
+        editBtn = findViewById(R.id.editButton);
+
         imagesUri= new ArrayList<>();
         imageMetadataUtils = new ArrayList<>();
         //Calling Intent
@@ -96,9 +110,14 @@ public class PostActivity extends AppCompatActivity {
                                     imageMetadataUtils.add( new ImageMetadataUtil());
                                     if(imageMetadataUtils.get(i).extractMetadata(PostActivity.this, uri, getContentResolver())){
                                         //MetaData Validation
+                                        metadataPhotoCount++;
                                         imagesUri.add(uri);
                                     }else {
-                                        Toast.makeText(PostActivity.this, "Please enable 'location tags' on the camera settings", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(PostActivity.this,
+                                                "Please enable 'location tags' on the camera settings", Toast.LENGTH_LONG).show();
+                                        editBtn.setVisibility(View.VISIBLE);
+                                        editBtn.setClickable(true);
+                                        noMetadataPhotos.add(uri);
                                     }
                                 }
                             }
@@ -123,7 +142,8 @@ public class PostActivity extends AppCompatActivity {
 
     private void checkStoragePermissionAndGetImage(){
         if(ActivityCompat.checkSelfPermission(PostActivity.this,
-                Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(PostActivity.this,
+                Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(PostActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ){
             if ( Build.VERSION.SDK_INT <= 32) {
                 ActivityCompat.requestPermissions(PostActivity.this,new String[]
@@ -146,17 +166,76 @@ public class PostActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 pickImageFromGallery();
             }else{
-                Toast.makeText(this,"Storage Permission is denied please allow permission to get image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Storage Permission is denied please " +
+                        "allow permission to get image", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
 
     private void mySetAdapter(){
         //Inserting photo on viewpager(imagesUri)
         ImagesAdapter imagesAdapter= new ImagesAdapter(this, imagesUri);
         uploadImg.setAdapter(imagesAdapter);
     }
+
+    private void mySetAdapterForEdits(){
+        ImagesAdapter imagesAdapter= new ImagesAdapter(this, noMetadataPhotos);
+        editPhotos.setAdapter(imagesAdapter);
+    }
+
+    public void editMetadata(){
+        View dimmingView = findViewById(R.id.dimmingView);
+        selectPhoto(dimmingView);
+    }
+
+    public void selectPhoto(View dimmingView){
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.editmetadata_popup, null);
+        dateTime = popupView.findViewById(R.id.editTextDate);
+        editPhotos = popupView.findViewById(R.id.editedImageViewer);
+        mySetAdapterForEdits();
+        MapView mapView = popupView.findViewById(R.id.mapView); if (mapView != null) {
+            mapView.onCreate(null);
+            mapView.onResume();
+            mapView.getMapAsync( this);
+
+        }
+
+
+        if (dimmingView != null) {
+            dimmingView.setVisibility(View.VISIBLE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#47252526")));
+        }
+            pw = new PopupWindow(popupView, 1020, 2000, true);
+            pw.setOnDismissListener(() -> {
+                if (dimmingView != null) {
+                    dimmingView.setVisibility(View.GONE);
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FF252526")));
+                }
+            });
+        pw.showAtLocation(this.findViewById(R.id.editButton), Gravity.CENTER, 0, 0);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        mMap.setOnMapClickListener(latLng -> {
+            if (selectedMarker != null) {
+                selectedMarker.remove(); // Remove the previous marker if it exists
+            }
+            // reset marker to adjust to new location
+            MarkerOptions markerOptions = new MarkerOptions().position(latLng);
+            selectedMarker = mMap.addMarker(markerOptions);
+            // Retrieve the latitude and longitude from the marker's position
+            latitude = latLng.latitude;
+            longitude = latLng.longitude;
+            // Use latitude and longitude as needed
+            Log.d("LatLng", "Latitude: " + latitude + ", Longitude: " + longitude);
+        });
+
+    }
+
 
     public void saveData() {
         LocalDateTime localDateTime = LocalDateTime.now();
@@ -231,8 +310,89 @@ public class PostActivity extends AppCompatActivity {
         });
     }
 
+
+    private void updateViewPagerWithEditedPhotos(ArrayList<Uri> editedPhotosUri) {
+        // Update imagesUri with edited photos
+        imagesUri.addAll(editedPhotosUri);
+
+        // Update the adapter for the ViewPager
+        mySetAdapter();
+
+        // Dismiss the popup window if it's showing
+        if (pw != null && pw.isShowing()) {
+            pw.dismiss();
+        }
+    }
+
+    public void saveEditedPhotos(){
+        ArrayList<Uri> editedPhotosUri = new ArrayList<>();
+
+        if (noMetadataPhotos.size() > metadataPhotoCount) { // NON METADATA PHOTOS ARE MORE THAN METADATA
+            int j=0;
+            for (int i = metadataPhotoCount; i < noMetadataPhotos.size(); i++) {
+                // Set the edited metadata info to ImageMetadataUtil object
+                imageMetadataUtils.get(i).setLatitude(latitude);
+                imageMetadataUtils.get(i).setLongitude(longitude);
+                imageMetadataUtils.get(i).setLongitude(longitude);
+                imageMetadataUtils.get(i).setDateTime(dateTime.getText().toString());
+                // Check if metadata extraction is unsuccessful
+                if (imageMetadataUtils.get(i).extractMetadata(PostActivity.this, noMetadataPhotos.get(j), getContentResolver())) {
+                    editedPhotosUri.add(noMetadataPhotos.get(j)); // Add the edited photo to the editedPhotosUri list
+                    j++;
+                }
+            }
+        }
+
+
+        else if(noMetadataPhotos.size() == metadataPhotoCount){
+            int j=0;
+            for (int i = metadataPhotoCount; i <= noMetadataPhotos.size(); i++) {
+                // Set the edited metadata info to ImageMetadataUtil object
+                imageMetadataUtils.get(i).setLatitude(latitude);
+                imageMetadataUtils.get(i).setLongitude(longitude);
+                imageMetadataUtils.get(i).setLongitude(longitude);
+                imageMetadataUtils.get(i).setDateTime(dateTime.getText().toString());
+                // Check if metadata extraction is unsuccessful
+                if (imageMetadataUtils.get(i).extractMetadata(PostActivity.this, noMetadataPhotos.get(j), getContentResolver())) {
+                    editedPhotosUri.add(noMetadataPhotos.get(j)); // Add the edited photo to the editedPhotosUri list
+                    j++;
+                }
+            }
+        }
+        else { // METADATA PHOTOS ARE MORE THAN NON METADATA
+            int j=0;
+                for (int i = metadataPhotoCount; i > noMetadataPhotos.size(); i--) {
+                    // Set the edited metadata info to ImageMetadataUtil object
+                    imageMetadataUtils.get(i).setLatitude(latitude);
+                    imageMetadataUtils.get(i).setLongitude(longitude);
+                    imageMetadataUtils.get(i).setLongitude(longitude);
+                    imageMetadataUtils.get(i).setDateTime(dateTime.getText().toString());
+                    // Check if metadata extraction is unsuccessful
+                    if (imageMetadataUtils.get(i).extractMetadata(PostActivity.this, noMetadataPhotos.get(j), getContentResolver())) {
+                        editedPhotosUri.add(noMetadataPhotos.get(j)); // Add the edited photo to the editedPhotosUri list
+                        j++;
+                    }
+                }
+            }
+
+        updateViewPagerWithEditedPhotos(editedPhotosUri);
+
+    }
+
+    public void editOnClick(View view){
+        editMetadata();}
+
+    public void saveEditsOnClick(View view) {
+        saveEditedPhotos();
+        editBtn.setVisibility(View.GONE);
+        editBtn.setClickable(false);}
+
+    public void cancelEditsOnClick(View view){
+        pw.dismiss();
+    }
+
     public void uploadOnClick(View view){
-        saveData();
+         saveData();
     }
 
     public void cancelOnClick(View view){
@@ -256,7 +416,6 @@ public class PostActivity extends AppCompatActivity {
         bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
-
         // Add dismiss listener to handle the dimming reset when the BottomSheet is dismissed
         bottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override

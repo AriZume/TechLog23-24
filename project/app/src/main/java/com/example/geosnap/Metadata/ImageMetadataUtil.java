@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ImageMetadataUtil {
-    private double latitude, longitude, imgSize;
+    private double latitude;
+    private double longitude;
+    private double imgSize;
 
     private String imgHeight, imgWidth, dateTime;
 
@@ -56,6 +58,18 @@ public class ImageMetadataUtil {
         return dateTime;
     }
 
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
 
     public boolean extractMetadata(Context context, Uri photoUri,ContentResolver activityContentResolver) {
         try {
@@ -64,9 +78,6 @@ public class ImageMetadataUtil {
 
             if (inputStream != null) {
                 Metadata metadata = ImageMetadataReader.readMetadata(inputStream);
-//                if (!containsMetadata(metadata)) {
-//                    throw new RuntimeException("Selected photo does not contain metadata. Please choose another photo.");
-//                }
                 File file = new File(getRealPathFromURI(photoUri,activityContentResolver));
                 imgSize = file.length();
                 Log.d("PhotoMetadata", "File Size: " + imgSize + " bytes");
@@ -74,8 +85,10 @@ public class ImageMetadataUtil {
                     for (Tag tag : directory.getTags()) {
                         if (tag.getTagName().equals("Image Height")) {
                             imgHeight =tag.getDescription();
+                            Log.d("height",imgHeight);
                         }else if (tag.getTagName().equals("Image Width")) {
                             imgWidth = tag.getDescription();
+                            Log.d("width",imgWidth);
                         } else if (tag.getTagName().equals("Date/Time")) {
                             dateTime =tag.getDescription();
                         }
@@ -99,13 +112,6 @@ public class ImageMetadataUtil {
         return containsMetadata();
     }
 
-//    private boolean containsMetadata(Metadata metadata) {
-//        if (metadata == null) {
-//            return false;
-//        }
-//        Iterable<Directory> directories = metadata.getDirectories();
-//        return directories != null && directories.iterator().hasNext();
-//    }
 
     private String getRealPathFromURI(Uri contentURI,ContentResolver contentResolver) {
         String result;
