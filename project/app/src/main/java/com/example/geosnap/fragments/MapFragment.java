@@ -202,7 +202,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
 
     private void setLocationsOnMap() {
         if(loc != null && image != null){
-            googleMap.addMarker(new MarkerOptions().position(loc).title(dateTimeKey).snippet(tag).icon(BitmapDescriptorFactory.fromBitmap(image)));
+            googleMap.addMarker(new MarkerOptions()
+                    .position(loc)
+                    .title(dateTimeKey)
+                    .snippet(tag)
+                    .icon(BitmapDescriptorFactory.fromBitmap(image)));
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)));
         }
         loc=null;
         tag="";
