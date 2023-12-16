@@ -10,91 +10,44 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/detailName"
-        android:text="Name"
+        android:id="@+id/detailTag"
+        android:text="Tag"
         android:layout_marginTop="14dp"
         android:textSize="24sp"
         android:layout_gravity="center"
-        android:layout_marginBottom="12dp"
-        android:textColor="@color/lavender"/>
+        android:textColor="@color/green"/>
 
-    <ImageView
-        android:layout_width="400dp"
-        android:layout_height="200dp"
-        android:id="@+id/detailImage"
-        android:padding="8dp"
-        android:layout_gravity="center"
-        android:src="@drawable/uploadimg"
-        android:scaleType="fitXY"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:padding="20dp"
+        android:paddingBottom="5dp"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
         android:text="Date"
         android:layout_gravity="center"
         android:id="@+id/detailDate"
         android:textSize="18sp"
-        android:textColor="@color/lavender"/>
+        android:textColor="#959494"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:padding="20dp"
-        android:text="Owner"
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="350dp"
+        android:id="@+id/detailImage"
         android:layout_gravity="center"
-        android:id="@+id/detailAuthor"
-        android:textSize="18sp"
-        android:textColor="@color/lavender"/>
+        android:src="@drawable/uploadimg"
+        android:scaleType="fitCenter"/>
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="0dp"
         android:padding="20dp"
         android:text="Description"
         android:layout_gravity="center"
         android:id="@+id/detailDesc"
         android:textSize="18sp"
-        android:textColor="@color/lavender"/>
+        android:textColor="#959494"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.github.clans.fab.FloatingActionMenu
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            app:menu_fab_size="normal"
-            android:layout_marginBottom="20dp"
-            android:layout_marginEnd="20dp"
-            app:menu_colorPressed="@color/lavender"
-            app:menu_colorNormal="@color/lavender"
-            app:menu_icon="@drawable/baseline_format_list_bulleted_24"
-            app:menu_openDirection="up"
-            app:menu_showShadow="true">
-
-            <com.github.clans.fab.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/editButton"
-                android:src="@drawable/baseline_edit_24"
-                app:fab_showShadow="true"
-                app:fab_colorNormal="@color/green"
-                app:fab_size="mini"/>
-
-            <com.github.clans.fab.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/deleteButton"
-                android:src="@drawable/baseline_delete_24"
-                app:fab_showShadow="true"
-                app:fab_colorNormal="@color/green"
-                app:fab_size="mini"/>
-
-        </com.github.clans.fab.FloatingActionMenu>
-    </RelativeLayout>
 </LinearLayout>
