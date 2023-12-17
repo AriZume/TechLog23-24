@@ -168,6 +168,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
 //               .position(location)
 //               .title(tag)
 //               .snippet(dateTimeKey));
+
             MyItem marker = new MyItem(location, tag, dateTimeKey);
             clusterManager.addItem(marker);
         }
