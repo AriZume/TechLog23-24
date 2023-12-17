@@ -42,7 +42,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private boolean isInitialLocationUpdate = true;
 
-    private ArrayList<LatLng> locations = new ArrayList<>();
+    private String dateTimeKey, tag;
+    private LatLng location;
 
 
     @Nullable
@@ -70,8 +71,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         updateLocationUI();
         startLocationUpdates();
 
-        setLocationsOnMap();
+
         retrieveData(this);
+        setLocationsOnMap();
     }
 
     private void createLocationCallback() {
@@ -150,17 +152,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     }
 
     @Override
-    public void onLocationsLoaded(ArrayList<LatLng> locations) {
+    public void onLocationsLoaded(String datetime, LatLng location, String tag){     // gia tin foto , Bitmap image) {  //String URL gia tin photo
         // Call the method to set locations on the map
         setLocationsOnMap();
     }
 
     private void setLocationsOnMap() {
-        //Log.d("locations", "onChildAdded: " + locations.toString());
-        for (LatLng location : locations) {
-            googleMap.addMarker(new MarkerOptions().position(location).title("TEST"));
 
+        if(location != null){
+            googleMap.addMarker(new MarkerOptions()
+               .position(location)
+               .title(tag)
+               .snippet(dateTimeKey));
         }
+        location=null;
+        tag="";
+        dateTimeKey="";
     }
 
     private void retrieveData(OnLocationsLoadedListener listener) {
@@ -170,26 +177,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
+                tag = dataSnapshot.child("tag").getValue().toString();
+
                 for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
-                    String imageID = uniqueIdSnapshot.getKey();
+                    String imageID = uniqueIdSnapshot.getKey(); //Gets the inner child key (UniqueImageID)
                     Double latitude = uniqueIdSnapshot.child("latitude").getValue(Double.class);
                     Double longitude = uniqueIdSnapshot.child("longitude").getValue(Double.class);
+                    String imageURL = uniqueIdSnapshot.child("imageURL").getValue().toString();
+                    Log.d("imageURL", "onChildAdded: " + imageURL);
 
                     if (latitude != null && longitude != null) {
                         Log.d("imageID", "onChildAdded: " + imageID);
                         Log.d("lat", "onChildAdded: " + latitude);
                         Log.d("lng", "onChildAdded: " + longitude);
 
-                        locations.add(new LatLng(latitude, longitude));
-                        Log.d("locations1", "onChildAdded: " + locations);
-                        if(prevChildKey != null) {
-                            Log.d("key", "onChildAdded: " + prevChildKey);
-                        }
+
+                        location = new LatLng(latitude, longitude);
                     }
+                    break;
                 }
 
+                Log.d("key", "onChildAdded: " + dateTimeKey);
                 if (listener != null) {
-                    listener.onLocationsLoaded(locations);
+                    listener.onLocationsLoaded(MapFragment.this.dateTimeKey, location, tag);  //     gia tin foto , image);
                 }
             }
 
