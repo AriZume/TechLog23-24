@@ -8,10 +8,8 @@ import androidx.annotation.Nullable;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,6 @@ import androidx.appcompat.widget.SearchView;
 import com.example.geosnap.R;
 import com.example.geosnap.databases.DatabaseData;
 import com.example.geosnap.databases.MyAdapter;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,7 +35,11 @@ public class SearchFragment extends Fragment {
     private ArrayList<DatabaseData> dataList;
     private MyAdapter adapter;
     Context thiscontext;
-    private String desc, tag, dateTimeKey, imageUrl, objImages;
+    private String desc;
+    private String tag;
+    private String dateTimeKey;
+    private String imageUrl;
+    private Iterable<DataSnapshot> objImages;
 
 
     @Override
@@ -106,13 +107,11 @@ public class SearchFragment extends Fragment {
                 dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
                 tag = dataSnapshot.child("tag").getValue().toString();
                 desc = dataSnapshot.child("description").getValue().toString();
-                //imageUrl = dataSnapshot.getChildren().child("imageURL").getValue().toString();
-               // objImages = dataSnapshot.child(i).getValue().toString();
-                for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
-
+                objImages = dataSnapshot.getChildren();
+                for (DataSnapshot uniqueIdSnapshot : objImages) {
+                    if(uniqueIdSnapshot.child("imageURL").)
                     imageUrl = uniqueIdSnapshot.child("imageURL").getValue().toString();
 
-                    break;
                 }
 
                 DatabaseData databaseData = new DatabaseData();
