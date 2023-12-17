@@ -23,13 +23,18 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.util.ArrayList;
 
@@ -44,6 +49,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
 
     private String dateTimeKey, tag;
     private LatLng location;
+    private ClusterManager<MyItem> clusterManager;
+
+    private BitmapDescriptor icon;
 
 
     @Nullable
@@ -71,7 +79,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         updateLocationUI();
         startLocationUpdates();
 
-
+        clusterManager = new ClusterManager<MyItem>(getContext(), map);
+        clusterManager.setRenderer(new MarkerClusterRenderer(getContext(), map, clusterManager));
+        map.setOnCameraIdleListener(clusterManager);
+        map.setOnMarkerClickListener(clusterManager);
         retrieveData(this);
         setLocationsOnMap();
     }
@@ -152,7 +163,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     }
 
     @Override
-    public void onLocationsLoaded(String datetime, LatLng location, String tag){     // gia tin foto , Bitmap image) {  //String URL gia tin photo
+    public void onLocationsLoaded(String datetime, LatLng location, String tag){
         // Call the method to set locations on the map
         setLocationsOnMap();
     }
@@ -160,10 +171,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     private void setLocationsOnMap() {
 
         if(location != null){
-            googleMap.addMarker(new MarkerOptions()
-               .position(location)
-               .title(tag)
-               .snippet(dateTimeKey));
+//            googleMap.addMarker(new MarkerOptions()
+//               .position(location)
+//               .title(tag)
+//               .snippet(dateTimeKey)
+//               .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+//            if(tag=="tag 1"){
+//
+//            }
+            //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            //super.onBeforeClusterItemRendered(item, markerOptions);
+            //icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+            MyItem marker = new MyItem(location, tag, dateTimeKey);
+            //clusterManager.setRenderer(new MarkerClusterRenderer(this, map, clusterManager));
+            clusterManager.addItem(marker);
         }
         location=null;
         tag="";
