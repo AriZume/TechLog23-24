@@ -1,11 +1,13 @@
 package com.example.geosnap.fragments;
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -31,7 +33,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -40,14 +41,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import android.graphics.Bitmap;
+import com.google.maps.android.clustering.ClusterManager;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
+import android.graphics.Bitmap;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocationsLoadedListener { //, ImageConversionListener {
 
@@ -61,8 +57,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     private Runnable refreshRunnable;
     private boolean isInitialLocationUpdate = true;
     private String dateTimeKey, tag;
-    private LatLng loc;
-    private Bitmap image;
+    private LatLng location;
+    //private Bitmap image;
+    private ClusterManager<MyItem> clusterManager;
 
     @Nullable
     @Override
@@ -88,6 +85,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         updateLocationUI();
         startLocationUpdates();
 
+        clusterManager = new ClusterManager<MyItem>(getContext(), map);
+        map.setOnCameraIdleListener(clusterManager);
+        map.setOnMarkerClickListener(clusterManager);
         retrieveData(this);
         setLocationsOnMap();
     }
@@ -195,24 +195,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     }
 
     @Override
-    public void onLocationsLoaded(String datetime, LatLng location, String tag, Bitmap image) {  //String URL gia tin photo
+    public void onLocationsLoaded(String datetime, LatLng location, String tag){     // gia tin foto , Bitmap image) {  //String URL gia tin photo
         // Call the method to set locations on the map
         setLocationsOnMap();
     }
 
     private void setLocationsOnMap() {
-        if(loc != null && image != null){
-            googleMap.addMarker(new MarkerOptions()
-                    .position(loc)
-                    .title(dateTimeKey)
-                    .snippet(tag)
-                    .icon(BitmapDescriptorFactory.fromBitmap(image)));
-                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)));
+
+        if(location != null){     // gia tin foto  && image != null){
+            //googleMap.addMarker(new MarkerOptions()
+                 //   .position(location)  );
+                    //.title(dateTimeKey)
+                    //.snippet(tag)
+
+                    //gia na mpei i foto anti gia to marker
+                    //.icon(BitmapDescriptorFactory.fromBitmap(image))
+                    //.anchor(0.5f, 1)
+            MyItem offsetItem = new MyItem(location, "test", "This is a test item");
+            clusterManager.addItem(offsetItem);
         }
-        loc=null;
+        location=null;
         tag="";
         dateTimeKey="";
-        image=null;
+        //image=null;
     }
 
     // Display of an upload on the map
@@ -235,28 +240,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
 
 
 
-
-                    Glide.with(getContext())
-                            .asBitmap()
-                            .load(imageURL)
-                            .into(new CustomTarget<Bitmap>(100,100) {
-                                @Override
-                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                    image=resource;
-                                }
-
-                                @Override
-                                public void onLoadCleared(@Nullable Drawable placeholder) {
-                                }
-                            });
-
-
-                    if (image != null) {
-                        Log.d("notnulllll", "onChildAdded: ");
-
-                    } else{
-                        Log.d("nulllll", "onChildAdded: ");
-                    }
+//gia na paroume tin foto
+//                    Glide.with(getContext())
+//                            .asBitmap()
+//                            .load(imageURL)
+//                            .into(new CustomTarget<Bitmap>(100,100) {
+//                                @Override
+//                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//                                    image=resource;
+//                                }
+//
+//                                @Override
+//                                public void onLoadCleared(@Nullable Drawable placeholder) {
+//                                }
+//                            });
+//
+//
+//                    if (image != null) {
+//                        Log.d("notnulllll", "onChildAdded: ");
+//
+//                    } else{
+//                        Log.d("nulllll", "onChildAdded: ");
+//                    }
 
 
 
@@ -266,14 +271,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
                         Log.d("lng", "onChildAdded: " + longitude);
 
 
-                        loc = new LatLng(latitude, longitude);
+                        location = new LatLng(latitude, longitude);
                     }
                     break;
                 }
 
                 Log.d("key", "onChildAdded: " + dateTimeKey);
                 if (listener != null) {
-                    listener.onLocationsLoaded(MapFragment.this.dateTimeKey, loc, tag, image);
+                    listener.onLocationsLoaded(MapFragment.this.dateTimeKey, location, tag);  //     gia tin foto , image);
                 }
             }
 
