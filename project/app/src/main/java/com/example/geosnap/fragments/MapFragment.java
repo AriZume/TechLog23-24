@@ -30,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 
@@ -44,6 +45,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
 
     private String dateTimeKey, tag;
     private LatLng location;
+    private ClusterManager<MyItem> clusterManager;
 
 
     @Nullable
@@ -71,7 +73,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
         updateLocationUI();
         startLocationUpdates();
 
-
+        clusterManager = new ClusterManager<MyItem>(getContext(), map);
+        map.setOnCameraIdleListener(clusterManager);
+        map.setOnMarkerClickListener(clusterManager);
         retrieveData(this);
         setLocationsOnMap();
     }
@@ -160,10 +164,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
     private void setLocationsOnMap() {
 
         if(location != null){
-            googleMap.addMarker(new MarkerOptions()
-               .position(location)
-               .title(tag)
-               .snippet(dateTimeKey));
+//            googleMap.addMarker(new MarkerOptions()
+//               .position(location)
+//               .title(tag)
+//               .snippet(dateTimeKey));
+            MyItem marker = new MyItem(location, tag, dateTimeKey);
+            clusterManager.addItem(marker);
         }
         location=null;
         tag="";

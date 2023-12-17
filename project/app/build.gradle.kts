@@ -69,4 +69,12 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.14.2@aar")
 
     implementation("com.google.android.gms:play-services-location:19.0.1")
+
+
+    // alkinoos 17/12 cluster item
+    // Utility Library for Maps SDK for Android
+    // You do not need to add a separate dependency for the Maps SDK for Android
+    // since this library builds in the compatible version of the Maps SDK.
+    implementation ("com.google.maps.android:android-maps-utils:3.8.0")
+
 }
