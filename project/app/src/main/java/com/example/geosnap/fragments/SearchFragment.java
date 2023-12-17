@@ -38,7 +38,7 @@ public class SearchFragment extends Fragment {
     private ArrayList<DatabaseData> dataList;
     private MyAdapter adapter;
     Context thiscontext;
-    private String desc, tag, dateTimeKey, imageUrl, objImages;
+    private String desc, tag, dateTimeKey;
 
 
     @Override
@@ -106,20 +106,19 @@ public class SearchFragment extends Fragment {
                 dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
                 tag = dataSnapshot.child("tag").getValue().toString();
                 desc = dataSnapshot.child("description").getValue().toString();
-                //imageUrl = dataSnapshot.getChildren().child("imageURL").getValue().toString();
-               // objImages = dataSnapshot.child(i).getValue().toString();
+                ArrayList<String> imagesUrl = new ArrayList<>();
                 for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
-
-                    imageUrl = uniqueIdSnapshot.child("imageURL").getValue().toString();
-
-                    break;
+                    if (uniqueIdSnapshot.child("imageURL").exists()){
+                        String imageUrl = uniqueIdSnapshot.child("imageURL").getValue().toString();
+                        imagesUrl.add(imageUrl);
+                    }
                 }
 
                 DatabaseData databaseData = new DatabaseData();
                 databaseData.setDesc(desc);
                 databaseData.setDateTime(dateTimeKey);
                 databaseData.setTag(tag);
-                databaseData.setImageURL(imageUrl);
+                databaseData.setImagesUrl(imagesUrl);
                 dataList.add(databaseData);
                 adapter.notifyDataSetChanged();
 
