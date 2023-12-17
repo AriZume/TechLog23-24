@@ -109,6 +109,7 @@ public class ImageMetadataUtil {
         } catch (ImageProcessingException e) {
             throw new RuntimeException(e);
         }
+        Log.d("debug",""+latitude+"\n"+longitude);
         return containsMetadata();
     }
 
@@ -128,6 +129,7 @@ public class ImageMetadataUtil {
     }
 
     public boolean containsMetadata(){
+        Log.d("debug",""+!(getLatitude() == 0 || getLongitude() == 0 || getDateTime().equals("0")));
         return !(getLatitude() == 0 || getLongitude() == 0 || getDateTime().equals("0"));
     }
 }
