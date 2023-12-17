@@ -38,7 +38,7 @@ public class SearchFragment extends Fragment {
     private ArrayList<DatabaseData> dataList;
     private MyAdapter adapter;
     Context thiscontext;
-    private String desc, tag, dateTimeKey, imageUrl;
+    private String desc, tag, dateTimeKey, imageUrl, objImages;
 
 
     @Override
@@ -106,7 +106,8 @@ public class SearchFragment extends Fragment {
                 dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
                 tag = dataSnapshot.child("tag").getValue().toString();
                 desc = dataSnapshot.child("description").getValue().toString();
-
+                //imageUrl = dataSnapshot.getChildren().child("imageURL").getValue().toString();
+               // objImages = dataSnapshot.child(i).getValue().toString();
                 for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
 
                     imageUrl = uniqueIdSnapshot.child("imageURL").getValue().toString();

@@ -281,7 +281,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Uri urlImage = uriTask.getResult();
                     String imageURL = urlImage.toString();
                     Log.d("imageURL", "saveData: " + imageURL);
-                    uploadData(imageURL, imageMetadataUtils.get(finalI), localDateTime.format(formatter));
+                    uploadData(finalI,imageURL, imageMetadataUtils.get(finalI), localDateTime.format(formatter));
                     dialog.dismiss();
                 }).addOnFailureListener(e -> {
                     Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -295,7 +295,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void uploadData(String imageURL, ImageMetadataUtil imageMetadataUtil, String localDateTime) {
+    public void uploadData(int i,String imageURL, ImageMetadataUtil imageMetadataUtil, String localDateTime) {
         String tag = tagBtn.getText().toString();
         if(tag.equals("add a tag +")) {
             tag = "none";
@@ -314,8 +314,8 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                 imageMetadataUtil.getImgHeight(),
                 imageMetadataUtil.getImgWidth(),
                 imageURL, imageMetadataUtil.getDateTime());
-
-        dbRef.push().setValue(dataClass).addOnSuccessListener(new OnSuccessListener<Void>() {
+        String customName = String.valueOf(i);
+        dbRef.child(customName).setValue(dataClass).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {
                 count+=1;
