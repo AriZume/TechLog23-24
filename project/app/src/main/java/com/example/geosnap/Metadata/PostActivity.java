@@ -20,6 +20,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -54,7 +56,7 @@ import java.time.LocalDateTime;
 public class PostActivity extends AppCompatActivity implements OnMapReadyCallback{
     EditText etDescription,dateTime;
     double latitude,longitude;
-    Button cancelBtn, uploadBtn, tagBtn, btnSelectImages, editBtn;
+    Button cancelBtn, uploadBtn, tagBtn, btnSelectImages, editBtn, saveEditsBtn;
     private ArrayList<Uri> imagesUri;
     private int metadataPhotoCount;
     private ViewPager uploadImg,editPhotos;
@@ -63,6 +65,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private ArrayList<ImageMetadataUtil> imageMetadataUtils;
     ArrayList<Uri> noMetadataPhotos = new ArrayList<>();
+    ArrayList<Uri> emptyAdapterList = new ArrayList<>();
     private int count = 0;
     private static final int STORAGE_PERMISSION_CODE = 1;
     ActivityResultLauncher<Intent> imageResultLauncher;
@@ -193,6 +196,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         View popupView = inflater.inflate(R.layout.editmetadata_popup, null);
         dateTime = popupView.findViewById(R.id.editTextDate);
         editPhotos = popupView.findViewById(R.id.editedImageViewer);
+        saveEditsBtn = popupView.findViewById(R.id.saveEditsButton);
         mySetAdapterForEdits();
         MapView mapView = popupView.findViewById(R.id.mapView); if (mapView != null) {
             mapView.onCreate(null);
@@ -200,7 +204,6 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapView.getMapAsync( this);
 
         }
-
 
         if (dimmingView != null) {
             dimmingView.setVisibility(View.VISIBLE);
@@ -214,6 +217,25 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
         pw.showAtLocation(this.findViewById(R.id.editButton), Gravity.CENTER, 0, 0);
+
+        dateTime.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Not used, but needs to be implemented
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Not used, but needs to be implemented
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Check if the EditText is empty or contains only spaces
+                String text = dateTime.getText().toString().trim();
+                saveEditsBtn.setEnabled(!text.isEmpty()); // Enable the button if EditText is not empty
+            }
+        });
     }
 
     @Override
@@ -230,6 +252,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Retrieve the latitude and longitude from the marker's position
             latitude = latLng.latitude;
             longitude = latLng.longitude;
+            saveEditsBtn.setVisibility(View.VISIBLE);
             // Use latitude and longitude as needed
             Log.d("LatLng", "Latitude: " + latitude + ", Longitude: " + longitude);
         });
@@ -329,7 +352,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (noMetadataPhotos.size() > metadataPhotoCount) { // NON METADATA PHOTOS ARE MORE THAN METADATA
             int j=0;
-            for (int i = metadataPhotoCount; i < noMetadataPhotos.size(); i++) {
+            for (int i = metadataPhotoCount; i < noMetadataPhotos.size()+metadataPhotoCount; i++) {
                 // Set the edited metadata info to ImageMetadataUtil object
                 imageMetadataUtils.get(i).setLatitude(latitude);
                 imageMetadataUtils.get(i).setLongitude(longitude);
@@ -344,7 +367,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
-        else if(noMetadataPhotos.size() == metadataPhotoCount){
+        else if(noMetadataPhotos.size() == metadataPhotoCount){ // NON METADATA PHOTOS ARE THE SAME WITH METADATA
             int j=0;
             for (int i = metadataPhotoCount; i <= noMetadataPhotos.size(); i++) {
                 // Set the edited metadata info to ImageMetadataUtil object
@@ -360,20 +383,28 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         else { // METADATA PHOTOS ARE MORE THAN NON METADATA
-            int j=0;
-                for (int i = metadataPhotoCount; i > noMetadataPhotos.size(); i--) {
-                    // Set the edited metadata info to ImageMetadataUtil object
-                    imageMetadataUtils.get(i).setLatitude(latitude);
-                    imageMetadataUtils.get(i).setLongitude(longitude);
-                    imageMetadataUtils.get(i).setLongitude(longitude);
-                    imageMetadataUtils.get(i).setDateTime(dateTime.getText().toString());
-                    // Check if metadata extraction is unsuccessful
-                    if (imageMetadataUtils.get(i).extractMetadata(PostActivity.this, noMetadataPhotos.get(j), getContentResolver())) {
-                        editedPhotosUri.add(noMetadataPhotos.get(j)); // Add the edited photo to the editedPhotosUri list
-                        j++;
-                    }
+            int j = 0;
+            for (int i = metadataPhotoCount; i >= noMetadataPhotos.size(); i--) {
+                // Set the edited metadata info to ImageMetadataUtil object
+                imageMetadataUtils.get(i).setLatitude(latitude);
+                imageMetadataUtils.get(i).setLongitude(longitude);
+                imageMetadataUtils.get(i).setLongitude(longitude);
+                imageMetadataUtils.get(i).setDateTime(dateTime.getText().toString());
+
+                // Check if metadata extraction is unsuccessful
+                if (imageMetadataUtils.get(i).extractMetadata(PostActivity.this, noMetadataPhotos.get(j), getContentResolver())) {
+                    editedPhotosUri.add(noMetadataPhotos.get(j)); // Add the edited photo to the editedPhotosUri list
+                    j++;
+                }
+                if (noMetadataPhotos.size() == 1) {
+                    break;
+                }
+                if(metadataPhotoCount -noMetadataPhotos.size()==2 && i==metadataPhotoCount-1){
+                    break;
+
                 }
             }
+        }
 
         updateViewPagerWithEditedPhotos(editedPhotosUri);
 
@@ -383,9 +414,18 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         editMetadata();}
 
     public void saveEditsOnClick(View view) {
-        saveEditedPhotos();
-        editBtn.setVisibility(View.GONE);
-        editBtn.setClickable(false);}
+
+        String text = dateTime.getText().toString().trim();
+
+        if (text.isEmpty()) {
+            // Show a toast if EditText is empty when the button is clicked
+            Toast.makeText(getApplicationContext(), "Please enter a date", Toast.LENGTH_SHORT).show();
+        } else {
+            saveEditedPhotos();
+            editBtn.setVisibility(View.GONE);
+            editBtn.setClickable(false);
+        }
+    }
 
     public void cancelEditsOnClick(View view){
         pw.dismiss();
@@ -397,6 +437,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void cancelOnClick(View view){
         finish();
+
     }
 
     private void openBottomSheet() {
