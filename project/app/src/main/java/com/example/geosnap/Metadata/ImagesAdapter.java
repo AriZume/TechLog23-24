@@ -11,18 +11,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
 import com.example.geosnap.R;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ImagesAdapter extends PagerAdapter {
+public class ImagesAdapter<T> extends PagerAdapter {
 
     Context context;
-    ArrayList<Uri> imageUris;
+    ArrayList<T> imageUris;
     LayoutInflater layoutInflater;
 
-    public ImagesAdapter(Context context, ArrayList<Uri> imageUris) {
+    public ImagesAdapter(Context context, ArrayList<T> imageUris) {
         this.context = context;
         this.imageUris = imageUris;
         layoutInflater= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -36,10 +37,22 @@ public class ImagesAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        View view= layoutInflater.inflate(R.layout.images_single, container, false);
-        ImageView imageView= (ImageView) view.findViewById(R.id.imageView);
-        imageView.setImageURI(imageUris.get(position));
+        View view = layoutInflater.inflate(R.layout.images_single, container, false);
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
+        ArrayList<Uri> uriList = new ArrayList<>();
+
+        if (imageUris.get(position) instanceof String) {
+            for (int i = 0; i < imageUris.size(); i++) {
+                uriList.add(Uri.parse(imageUris.get(i).toString()));
+            }
+        } else if (imageUris.get(position) instanceof Uri) {
+            uriList = (ArrayList<Uri>) imageUris;
+        }
+        Glide.with(context)
+                .load((Uri) imageUris.get(position))
+                .into(imageView);
         Objects.requireNonNull(container).addView(view);
+
         return view;
     }
 

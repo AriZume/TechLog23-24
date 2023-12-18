@@ -298,7 +298,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void uploadData(String imageURL, ImageMetadataUtil imageMetadataUtil, String localDateTime) {
         String tag = tagBtn.getText().toString();
         if(tag.equals("add a tag +")) {
-            tag = "none";
+            tag = "None";
         }
         String description = etDescription.getText().toString();
 
@@ -314,7 +314,6 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
                 imageMetadataUtil.getImgHeight(),
                 imageMetadataUtil.getImgWidth(),
                 imageURL, imageMetadataUtil.getDateTime());
-
         dbRef.push().setValue(dataClass).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void unused) {

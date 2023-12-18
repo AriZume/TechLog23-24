@@ -1,19 +1,24 @@
 package com.example.geosnap.databases;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.geosnap.Metadata.ImagesAdapter;
 import com.example.geosnap.R;
+
+import java.util.ArrayList;
 
 public class DetailActivity extends AppCompatActivity {
 
     TextView detailDesc,detailDate, detailTag;
-    ImageView detailImage;
+    ViewPager detailImage;
     String imageUrl = "";
 
 
@@ -33,7 +38,19 @@ public class DetailActivity extends AppCompatActivity {
             detailTag.setText(bundle.getString("Tag"));
             detailDate.setText(bundle.getString("Date"));
             imageUrl= bundle.getString("Image");
-            Glide.with(this).load(bundle.getString("Image")).into(detailImage);
+
+            //Glide.with(this).load(bundle.getString("Image")).into(detailImage);
+            ArrayList<String> imagesUrl = bundle.getStringArrayList("Images");
+            ArrayList<Uri> imagesUri = new ArrayList<>();
+
+            if (imagesUrl != null) {
+                for (String imageUrl : imagesUrl) {
+                    imagesUri.add(Uri.parse(imageUrl));
+                }
+            }
+
+            ImagesAdapter adapter = new ImagesAdapter(this, imagesUri);
+            detailImage.setAdapter(adapter);
         }
         getSupportActionBar().setTitle("Details");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

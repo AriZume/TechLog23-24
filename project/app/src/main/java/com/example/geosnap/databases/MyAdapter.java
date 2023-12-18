@@ -31,7 +31,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     }
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Glide.with(context).load(dataList.get(position).getImageURL()).into(holder.recImage);
+        Glide.with(context).load(dataList.get(position).getImagesUrl().get(0)).into(holder.recImage);
         holder.recTag.setText(dataList.get(position).getTag());
         holder.recDesc.setText(dataList.get(position).getDesc());
         holder.recDate.setText(dataList.get(position).getDateTime());
@@ -39,10 +39,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("Image", dataList.get(holder.getAdapterPosition()).getImageURL());
+                intent.putExtra("Image", dataList.get(holder.getAdapterPosition()).getImagesUrl().get(0));
                 intent.putExtra("Description", dataList.get(holder.getAdapterPosition()).getDesc());
                 intent.putExtra("Tag", dataList.get(holder.getAdapterPosition()).getTag());
                 intent.putExtra("Date", dataList.get(holder.getAdapterPosition()).getDateTime());
+                intent.putStringArrayListExtra("Images", dataList.get(holder.getAdapterPosition()).getImagesUrl());
                 context.startActivity(intent);
             }
         });

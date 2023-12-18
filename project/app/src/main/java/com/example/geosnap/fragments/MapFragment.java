@@ -200,13 +200,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, OnLocat
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                 dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
-                tag = dataSnapshot.child("tag").getValue().toString();
+                tag = dataSnapshot.child("tag").getValue(String.class);
 
                 for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
                     String imageID = uniqueIdSnapshot.getKey(); //Gets the inner child key (UniqueImageID)
                     Double latitude = uniqueIdSnapshot.child("latitude").getValue(Double.class);
                     Double longitude = uniqueIdSnapshot.child("longitude").getValue(Double.class);
-                    String imageURL = uniqueIdSnapshot.child("imageURL").getValue().toString();
+                    String imageURL = uniqueIdSnapshot.child("imageURL").getValue(String.class);
                     Log.d("imageURL", "onChildAdded: " + imageURL);
 
                     if (latitude != null && longitude != null) {

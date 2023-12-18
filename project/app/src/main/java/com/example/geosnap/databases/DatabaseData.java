@@ -1,10 +1,14 @@
 package com.example.geosnap.databases;
 
+import java.util.ArrayList;
+
 public class DatabaseData {
 
     private double latitude, longitude, imgSize;
     String imgHeight, imgWidth, imageURL;
     String dateTime, tag, desc;
+
+    ArrayList<String> imagesUrl;
 
     public DatabaseData() {
     }
@@ -101,5 +105,14 @@ public class DatabaseData {
 
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
+    }
+
+
+    public ArrayList<String> getImagesUrl() {
+        return imagesUrl;
+    }
+
+    public void setImagesUrl(ArrayList<String> imagesUrl) {
+        this.imagesUrl = imagesUrl;
     }
 }
