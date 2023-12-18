@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
 import com.example.geosnap.R;
 
 import java.util.ArrayList;
@@ -36,26 +37,21 @@ public class ImagesAdapter<T> extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        View view= layoutInflater.inflate(R.layout.images_single, container, false);
-        ImageView imageView= (ImageView) view.findViewById(R.id.imageView);
+        View view = layoutInflater.inflate(R.layout.images_single, container, false);
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
         ArrayList<Uri> uriList = new ArrayList<>();
 
         if (imageUris.get(position) instanceof String) {
-            for (int i=0; i<imageUris.size(); i++) {
+            for (int i = 0; i < imageUris.size(); i++) {
                 uriList.add(Uri.parse(imageUris.get(i).toString()));
             }
-        } else if (imageUris.get(position) instanceof Uri){
-            uriList= (ArrayList<Uri>) imageUris;
+        } else if (imageUris.get(position) instanceof Uri) {
+            uriList = (ArrayList<Uri>) imageUris;
         }
-
-        imageView.setImageURI(uriList.get(position));
-        Objects.requireNonNull(container).addView(view);
-        /*
         Glide.with(context)
-                .load((String) imageUris.get(position))
+                .load((Uri) imageUris.get(position))
                 .into(imageView);
-        }
-        */
+        Objects.requireNonNull(container).addView(view);
 
         return view;
     }

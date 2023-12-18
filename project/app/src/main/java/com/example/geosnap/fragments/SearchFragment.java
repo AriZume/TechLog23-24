@@ -104,12 +104,12 @@ public class SearchFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                 dateTimeKey = dataSnapshot.getKey(); //Gets the outer child key (DateTime)
-                tag = dataSnapshot.child("tag").getValue().toString();
-                desc = dataSnapshot.child("description").getValue().toString();
+                tag = dataSnapshot.child("tag").getValue(String.class);
+                desc = dataSnapshot.child("description").getValue(String.class);
                 ArrayList<String> imagesUrl = new ArrayList<>();
                 for (DataSnapshot uniqueIdSnapshot : dataSnapshot.getChildren()) {
                     if (uniqueIdSnapshot.child("imageURL").exists()){
-                        String imageUrl = uniqueIdSnapshot.child("imageURL").getValue().toString();
+                        String imageUrl = uniqueIdSnapshot.child("imageURL").getValue(String.class);
                         imagesUrl.add(imageUrl);
                     }
                 }
