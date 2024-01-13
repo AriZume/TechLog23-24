@@ -35,6 +35,7 @@ android {
         viewBinding = true
         dataBinding = true
     }
+
 }
 
 dependencies {
@@ -76,5 +77,20 @@ dependencies {
     // You do not need to add a separate dependency for the Maps SDK for Android
     // since this library builds in the compatible version of the Maps SDK.
     implementation ("com.google.maps.android:android-maps-utils:3.8.0")
+
+    // Testing
+    // JUnit 4
+    testImplementation ("junit:junit:4.13.2")
+    // Mockito
+    testImplementation ("org.mockito:mockito-core:3.12.4")
+    androidTestImplementation ("org.mockito:mockito-android:3.12.4")
+    //Espresso
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation ("androidx.test:runner:1.4.0")
+    androidTestImplementation ("androidx.test:rules:1.4.0")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.4.0")
+    //Fragment Testing
+    androidTestImplementation ("androidx.fragment:fragment-testing:1.4.0");
 
 }

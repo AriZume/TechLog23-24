@@ -34,6 +34,15 @@ public class ImageMetadataUtil {
         this.dateTime="0";
     }
 
+    public ImageMetadataUtil(double latitude, double longitude, double imgSize, String imgHeight, String imgWidth, String dateTime) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.imgSize = imgSize;
+        this.imgHeight = imgHeight;
+        this.imgWidth = imgWidth;
+        this.dateTime = dateTime;
+    }
+
     public double getLatitude() {
         return latitude;
     }

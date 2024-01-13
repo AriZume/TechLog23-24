@@ -290,7 +290,7 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }else {
                 //MetaData Validation
-                Toast.makeText(PostActivity.this, "You need to select and image first", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PostActivity.this, "You need to select an image first", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -394,7 +394,6 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void cancelOnClick(View view){
         finish();
-
     }
 
     private void openBottomSheet() {
@@ -468,5 +467,13 @@ public class PostActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         // Show the Bottom Sheet Dialog
         bottomSheetDialog.show();
+    }
+
+    public EditText getEtDescription() {
+        return etDescription;
+    }
+
+    public Button getTagBtn() {
+        return tagBtn;
     }
 }
