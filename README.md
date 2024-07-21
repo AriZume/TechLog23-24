@@ -22,7 +22,7 @@ This project was built with the following:
  ## About The Project
  
 <p align="center">
-<img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/run.gif"  title="run"/>
+<img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/run.gif"  title="run"/>
 </p>
 
 GeoSnap is a dynamic and engaging platform designed to bring the world closer through the power of location-based photo sharing. GeoSnap offers a unique way to capture, share, and discover moments from around the globe.
@@ -52,7 +52,7 @@ To run GeoSnap, follow these steps:
 
 There's an example of how it should look like:
 <br>
-<img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/android.png"  title="android"/>
+<img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/android.png" width="300" title="android"/>
 
 
  ## Features
@@ -68,9 +68,10 @@ The application has four main use cases, namely posting, searching, editing phot
 
 ## Project Plan
 A project plan defines the strategy and approach for a project. It outlines the project's objectives, scope, timeline, resources and tasks. The project plan serves as a roadmap to guide the project team through the execution and completion of the project.
-<img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/project_plan.png" />
+<br>
+<img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/project_plan.png" />
 
-For more detais, check out this <a href="https://github.com/users/AriZume/projects/1/views/3">link</a> or our report (**report en.pdf**) in the <a href="https://github.com/AriZume/TechLog23-24/tree/master/sources/">sources</a> folder..
+For more detais, check out this <a href="https://github.com/users/AriZume/projects/1/views/3">link</a> or our report (**report en.pdf**) in the <a href="https://github.com/AriZume/TechLog23-24/blob/master/sources/">sources</a> folder..
 
  ## Usage
 
@@ -86,19 +87,19 @@ The Home button provides access to several key features of the app:
   <tr>
     <td>
      Location permission
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/location_permission.jpg"  title="location_permission"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/location_permission.jpg"  title="location_permission"/>
     </td>
     <td>
      Home
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/home.jpg"  title="home"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/home.jpg"  title="home"/>
     </td>
     <td>
      Pins
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/pins.jpg"  title="pins"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/pins.jpg"  title="pins"/>
     </td>
     <td>
      Pins metadata (when pressed)
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/pins_metadata.jpg"  title="pins_metadata"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/pins_metadata.jpg"  title="pins_metadata"/>
     </td>
 </tr>
 </table>
@@ -119,31 +120,31 @@ The Post button is central to creating and sharing new content:
 <tr>
     <td>
      Gallery permission
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/gallery_permission.jpg"  title="gallery_permission"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/gallery_permission.jpg"  title="gallery_permission"/>
     </td>
     <td>
      Add a tag button
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/add_a_tag.jpg"  title="add_a_tag"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/add_a_tag.jpg"  title="add_a_tag"/>
     </td>
     <td>
      Saving tag
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/tag_saving.jpg"  title="tag_saving"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/tag_saving.jpg"  title="tag_saving"/>
     </td>
     <td>
      Location off error 
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/location_off.jpg"  title="location_off"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/location_off.jpg"  title="location_off"/>
     </td>
     <td>
      Edit picture info button 
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/edit_picture_info.jpg"  title="edit_picture_info"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/edit_picture_info.jpg"  title="edit_picture_info"/>
     </td>
     <td>
      Manual date and location (edit picture info button)
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/manual_date_and_location.jpg"  title="manual_date_and_location"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/manual_date_and_location.jpg"  title="manual_date_and_location"/>
     </td>
     <td>
      Saving manual date and location
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/manual_saving.jpg"  title="manual_saving"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/manual_saving.jpg"  title="manual_saving"/>
     </td>
 </tr>
 </table>
@@ -161,15 +162,15 @@ The Search button helps users find specific content within the app:
 <tr>
     <td>
      Search 
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/search.jpg"  title="search"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/search.jpg"  title="search"/>
     </td>
     <td>
      Search with tag
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/search_with_tag.jpg"  title="search_with_tag"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/search_with_tag.jpg"  title="search_with_tag"/>
     </td>
     <td>
      Viewing post in search
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/view_post_in_search.jpg"  title="view_post_in_search"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/view_post_in_search.jpg"  title="view_post_in_search"/>
     </td>
 </tr>
 </table>
@@ -191,19 +192,19 @@ Storage:
 <tr>
     <td>
      All posts stored in database
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/db_info.png"  title="db_info"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/db_info.png"  title="db_info"/>
     </td>
     <td>
      Posts structure 
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/db_posts.png"  title="db_posts"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/db_posts.png"  title="db_posts"/>
     </td>
     <td>
      Posts information (for one image)
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/post_info_in_db.png"  title="post_info_in_db"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/post_info_in_db.png"  title="post_info_in_db"/>
     </td>
     <td>
      Some images stored in storage (information for one image)
-      <img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/db_images_storage.png"  title="db_images_storage"/>
+      <img src="https://github.com/AriZume/TechLog23-24/blob/master/screenshots/db_images_storage.png"  title="db_images_storage"/>
     </td>
 </tr>
 </table>
@@ -295,4 +296,4 @@ The resources that helped us through this whole process were the following:
 - [Store-Retrieve Data Sources](https://github.com/AriZume/TechLog23-24/blob/master/sources/store%20and%20retrieve%20data.docx)
 
 
-For more information, read the english version of our report (**report en.pdf**) in the <a href="https://github.com/AriZume/TechLog23-24/tree/master/sources/">sources</a> folder.
+For more information, read the english version of our report (**report en.pdf**) in the <a href="https://github.com/AriZume/TechLog23-24/blob/master/sources/">sources</a> folder.
