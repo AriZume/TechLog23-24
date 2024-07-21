@@ -22,7 +22,7 @@ This project was built with the following:
  ## About The Project
  
 <p align="center">
-<img src="https://github.com/AriZume/TechLog23-24/tree/master/sources/run.gif"  title="run"/>
+<img src="https://github.com/AriZume/TechLog23-24/tree/master/screenshots/run.gif"  title="run"/>
 </p>
 
 GeoSnap is a dynamic and engaging platform designed to bring the world closer through the power of location-based photo sharing. GeoSnap offers a unique way to capture, share, and discover moments from around the globe.
