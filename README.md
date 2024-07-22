@@ -213,7 +213,7 @@ Storage:
  
 ## Collaborators
 
-<p>A special thanks to the following for their contributions and support:</p>
+<p>This project was developed for the "Software Engineering" course at International Hellenic University. A special thanks to the following for their contributions and support:</p>
 <table>
 <tr>
 
